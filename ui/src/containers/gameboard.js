@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
+import { getGamestate, getLegalMoves } from '../actions/Actions';
 
 import Square from '../components/square';
 
@@ -18,14 +20,16 @@ export default class GameBoard extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        gamestate: state.gamestate
-    };
-}
+GameBoard.propTypes = {
+    getGamestate: PropTypes.func.isRequired,
+    getLegalMoves: PropTypes.func.isRequired,
+    gamestate: PropTypes.array.isRequired,
+    legalMoves: PropTypes.array
+};
 
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({}, dispatch);
-}
+const mapStateToProps = (state) => ({
+    gamestate: state.game.gamestate,
+    legalMoves: state.game.legalMoves
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameBoard);
+export default connect(mapStateToProps, { getGamestate, getLegalMoves })(GameBoard);
