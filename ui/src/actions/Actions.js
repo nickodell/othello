@@ -6,7 +6,7 @@ export const getGamestate = (newMove) => dispatch => {
 
     dispatch({
         type: UPDATE_GAMEBOARD,
-        payload: parsedGamestate
+        payload: parsedGamestate.gamestate
     });
 };
 
@@ -16,6 +16,6 @@ export const getLegalMoves = () => dispatch => {
 
     dispatch({
         type: GET_LEGAL_MOVES,
-        payload: parsedLegalMoves
+        payload: parsedLegalMoves.legalMoves
     });
 };
