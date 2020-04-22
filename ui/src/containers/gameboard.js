@@ -12,12 +12,14 @@ class GameBoard extends Component {
     }
 
     render() {
-        const board = this.props.gamestate.map((val, i) => {
-            // use css grid to display in 8x8
-            <Square values={val} />
-        });
+        console.log(this.props);
+        const board = this.props.gamestate.map((val, i) => (
+            <div key={i} className="tiles">
+                <Square values={val} />
+            </div>
+        ));
         return (
-            <div>
+            <div className="gameboard">
                 {board}
             </div>
         )
