@@ -1,8 +1,12 @@
 import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES } from './types';
 
-export const getGamestate = (newMove) => dispatch => {
-    const newGamestate = await fetch(''); // replace with web3 call
-    const parsedGamestate = await newGamestate.json();
+// TODO: Replace by web3 calls
+export const getGamestate = () => dispatch => {
+    // const newGamestate = await fetch('');
+    // const parsedGamestate = await newGamestate.json();
+    const parsedGamestate = {
+        gamestate: [0, 0, 0, 0, 0, 2, 3, 0, 0, 3, 2, 0, 0, 0, 0, 0]
+    };
 
     dispatch({
         type: UPDATE_GAMEBOARD,
@@ -11,8 +15,11 @@ export const getGamestate = (newMove) => dispatch => {
 };
 
 export const getLegalMoves = () => dispatch => {
-    const legalMoves = await fetch(''); // replace with web3 call
-    const parsedLegalMoves = await legalMoves.json();
+    // const legalMoves = await fetch('');
+    // const parsedLegalMoves = await legalMoves.json();
+    const parsedLegalMoves = {
+        legalMoves: [1, 4, 11, 14]
+    };
 
     dispatch({
         type: GET_LEGAL_MOVES,
