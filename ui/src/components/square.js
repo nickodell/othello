@@ -10,11 +10,9 @@ function getIcon(val) {
     else return 'black';
 }
 
-const Square = (props) => {
-    <div>
-        {/* replace by image tag */}
-        <p>{getIcon(props.values.val)}</p>
-    </div>
-}
+// TODO: replace <p> by <img>
+const Square = (props) => (
+    <p>{getIcon(props.values)}</p>
+);
 
 export default Square;
