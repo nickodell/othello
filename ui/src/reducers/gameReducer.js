@@ -3,7 +3,7 @@ import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES } from '../actions/types';
 const initialState = {
     gamestate: [],
     legalMoves: []
-}
+};
 
 export default function (state=initialState, action) {
     switch (action.type) {
