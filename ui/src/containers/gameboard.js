@@ -6,7 +6,7 @@ import { getGamestate, getLegalMoves } from '../actions/Actions';
 
 import Square from '../components/square';
 
-export default class GameBoard extends Component {
+class GameBoard extends Component {
     render() {
         const board = this.props.gamestate.map((val, i) => {
             // use css grid to display in 8x8
