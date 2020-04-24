@@ -10,7 +10,7 @@ contract Board {
     uint8 constant internal BOARD_SIZE = 8;
     string[2] playerNames;
     address[2] playerAddresses;
-    uint128 gameState;
+    uint128 public gameState;
     using Bits128 for uint128;
 
     constructor() public {
@@ -42,5 +42,9 @@ contract Board {
     function getTile(uint8 x, uint8 y) public view returns (uint8 value) {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, 2));
+    }
+    function debug() public view returns (uint128) {
+        // return gameState.bits(0, 2);
+        return gameState;
     }
 }
