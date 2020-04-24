@@ -7,7 +7,7 @@ contract othellofactory is othelloboard{
     struct Game{
         string player1;
         string player2;
-        // address adress1;
+        // address address1;
         // address address2;
         uint32[64] gameState;
     }
@@ -15,11 +15,11 @@ contract othellofactory is othelloboard{
     string[] private allplayers;
     uint playerCount;
     
-    Game[] public existinggames;
-    mapping (uint => address) playeridToAddress;
+    Game[] public existingGames;
+    mapping (uint => address) playerIdToAddress;
     mapping (address => uint) addressToPlayerid;
-    mapping (address => string) addressToPlayername;
-    mapping (uint32 => Game) gameidToGames;
+    mapping (address => string) addressToPlayerName;
+    mapping (uint32 => Game) gameIdToGames;
     mapping (address => Game[]) playerToExistingGames;
 
     function viewNumberOfPlayers() public view returns (uint){
@@ -29,17 +29,17 @@ contract othellofactory is othelloboard{
     function register(string memory name) public{
         playerCount=allplayers.push(name);
         addressToPlayerid[msg.sender]=playerCount;
-        playeridToAddress[playerCount]=msg.sender;
-        addressToPlayername[msg.sender]=name;
+        playerIdToAddress[playerCount]=msg.sender;
+        addressToPlayerName[msg.sender]=name;
     }
    
-   function createNewGame(uint opponetPlayerId) public{
-       require(msg.sender!=playeridToAddress[opponetPlayerId]); 
+   function createNewGame(uint opponentPlayerId) public{
+       require(msg.sender!=playerIdToAddress[opponentPlayerId]); 
        uint32[64] memory board=initializeBoard();
-       uint gameid=existinggames.push(Game(addressToPlayername[msg.sender],addressToPlayername[playeridToAddress[opponetPlayerId]],board))-1;
+       uint gameid=existingGames.push(Game(addressToPlayerName[msg.sender], addressToPlayerName[playerIdToAddress[opponentPlayerId]],board))-1;
     //   playerToExistingGames[msg.sender]=gameid;
-       playerToExistingGames[playeridToAddress[opponetPlayerId]].push(existinggames[gameid]);
-       playerToExistingGames[msg.sender].push(existinggames[gameid]);
+       playerToExistingGames[playerIdToAddress[opponentPlayerId]].push(existingGames[gameid]);
+       playerToExistingGames[msg.sender].push(existingGames[gameid]);
 
    }
    
