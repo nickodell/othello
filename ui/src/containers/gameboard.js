@@ -9,15 +9,26 @@ import Square from '../components/square';
 class GameBoard extends Component {
     componentDidMount() {
         this.props.getGamestate();
+        this.props.getLegalMoves();
     }
 
     render() {
         console.log(this.props);
-        const board = this.props.gamestate.map((val, i) => (
-            <div key={i} className="tiles">
-                <Square values={val} />
-            </div>
-        ));
+        const board = this.props.gamestate.map((val, i) => {
+            if (this.props.legalMoves.includes(i)) {
+                return (
+                    <div key={i} className="tile">
+                        <Square values={1} />
+                    </div>
+                );
+            } else {
+                return (
+                    <div key={i} className="tile">
+                        <Square values={val} />
+                    </div>
+                );
+            }
+        });
         return (
             <div className="gameboard">
                 {board}
