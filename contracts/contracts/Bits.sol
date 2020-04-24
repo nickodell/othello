@@ -6,20 +6,20 @@ pragma solidity >=0.5.0 <0.6.0;
 // pragma experimental "ABIEncoderV2";
 
 
-library Bits {
+library Bits128 {
 
-    uint constant internal ONE = uint(1);
-    uint constant internal ONES = uint(~0);
+    uint128 constant internal ONE = uint128(1);
+    uint128 constant internal ONES = uint128(~0);
 
     // Sets the bit at the given 'index' in 'self' to '1'.
     // Returns the modified value.
-    function setBit(uint self, uint8 index) internal pure returns (uint) {
+    function setBit(uint128 self, uint8 index) internal pure returns (uint128) {
         return self | ONE << index;
     }
 
     // Sets the bit at the given 'index' in 'self' to '0'.
     // Returns the modified value.
-    function clearBit(uint self, uint8 index) internal pure returns (uint) {
+    function clearBit(uint128 self, uint8 index) internal pure returns (uint128) {
         return self & ~(ONE << index);
     }
 
@@ -27,12 +27,12 @@ library Bits {
     //  '1' - if the bit is '0'
     //  '0' - if the bit is '1'
     // Returns the modified value.
-    function toggleBit(uint self, uint8 index) internal pure returns (uint) {
+    function toggleBit(uint128 self, uint8 index) internal pure returns (uint128) {
         return self ^ ONE << index;
     }
 
     // Get the value of the bit at the given 'index' in 'self'.
-    function bit(uint self, uint8 index) internal pure returns (uint8) {
+    function bit(uint128 self, uint8 index) internal pure returns (uint8) {
         return uint8(self >> index & 1);
     }
 
@@ -40,7 +40,7 @@ library Bits {
     // Returns:
     //  'true' - if the value of the bit is '1'
     //  'false' - if the value of the bit is '0'
-    function bitSet(uint self, uint8 index) internal pure returns (bool) {
+    function bitSet(uint128 self, uint8 index) internal pure returns (bool) {
         return self >> index & 1 == 1;
     }
 
@@ -49,40 +49,40 @@ library Bits {
     // Returns:
     //  'true' - if both bits are '0' or both bits are '1'
     //  'false' - otherwise
-    function bitEqual(uint self, uint other, uint8 index) internal pure returns (bool) {
+    function bitEqual(uint128 self, uint128 other, uint8 index) internal pure returns (bool) {
         return (self ^ other) >> index & 1 == 0;
     }
 
     // Get the bitwise NOT of the bit at the given 'index' in 'self'.
-    function bitNot(uint self, uint8 index) internal pure returns (uint8) {
+    function bitNot(uint128 self, uint8 index) internal pure returns (uint8) {
         return uint8(1 - (self >> index & 1));
     }
 
     // Computes the bitwise AND of the bit at the given 'index' in 'self', and the
     // corresponding bit in 'other', and returns the value.
-    function bitAnd(uint self, uint other, uint8 index) internal pure returns (uint8) {
+    function bitAnd(uint128 self, uint128 other, uint8 index) internal pure returns (uint8) {
         return uint8((self & other) >> index & 1);
     }
 
     // Computes the bitwise OR of the bit at the given 'index' in 'self', and the
     // corresponding bit in 'other', and returns the value.
-    function bitOr(uint self, uint other, uint8 index) internal pure returns (uint8) {
+    function bitOr(uint128 self, uint128 other, uint8 index) internal pure returns (uint8) {
         return uint8((self | other) >> index & 1);
     }
 
     // Computes the bitwise XOR of the bit at the given 'index' in 'self', and the
     // corresponding bit in 'other', and returns the value.
-    function bitXor(uint self, uint other, uint8 index) internal pure returns (uint8) {
+    function bitXor(uint128 self, uint128 other, uint8 index) internal pure returns (uint8) {
         return uint8((self ^ other) >> index & 1);
     }
 
     // Gets 'numBits' consecutive bits from 'self', starting from the bit at 'startIndex'.
-    // Returns the bits as a 'uint'.
+    // Returns the bits as a 'uint128'.
     // Requires that:
     //  - '0 < numBits <= 256'
     //  - 'startIndex < 256'
     //  - 'numBits + startIndex <= 256'
-    function bits(uint self, uint8 startIndex, uint16 numBits) internal pure returns (uint) {
+    function bits(uint128 self, uint8 startIndex, uint16 numBits) internal pure returns (uint128) {
         require(0 < numBits && startIndex < 256 && startIndex + numBits <= 256);
         return self >> startIndex & ONES >> 256 - numBits;
     }
@@ -94,22 +94,22 @@ library Bits {
     //  - '0 < numBits <= 256'
     //  - 'startIndex < 256'
     //  - 'numBits + startIndex <= 256'
-    function setBits(uint self, uint8 startIndex, uint16 numBits, uint newValue) internal pure returns (uint) {
+    function setBits(uint128 self, uint8 startIndex, uint16 numBits, uint128 newValue) internal pure returns (uint128) {
         require(0 < numBits && startIndex < 256 && startIndex + numBits <= 256);
-        uint maskInv = (uint(1) << numBits) - 1;
-        uint newValueShifted = (newValue << startIndex) & maskInv;
-        uint mask = ~maskInv;
-        uint maskShifted = mask << startIndex;
-        uint selfCleared = maskShifted & self;
+        uint128 maskInv = (uint128(1) << numBits) - 1;
+        uint128 newValueShifted = (newValue << startIndex) & maskInv;
+        uint128 mask = ~maskInv;
+        uint128 maskShifted = mask << startIndex;
+        uint128 selfCleared = maskShifted & self;
         return selfCleared | newValueShifted;
     }
 
     // Computes the index of the highest bit set in 'self'.
     // Returns the highest bit set as an 'uint8'.
     // Requires that 'self != 0'.
-    function highestBitSet(uint self) internal pure returns (uint8 highest) {
+    function highestBitSet(uint128 self) internal pure returns (uint8 highest) {
         require(self != 0);
-        uint val = self;
+        uint128 val = self;
         for (uint8 i = 128; i >= 1; i >>= 1) {
             if (val & (ONE << i) - 1 << i != 0) {
                 highest += i;
@@ -121,9 +121,9 @@ library Bits {
     // Computes the index of the lowest bit set in 'self'.
     // Returns the lowest bit set as an 'uint8'.
     // Requires that 'self != 0'.
-    function lowestBitSet(uint self) internal pure returns (uint8 lowest) {
+    function lowestBitSet(uint128 self) internal pure returns (uint8 lowest) {
         require(self != 0);
-        uint val = self;
+        uint128 val = self;
         for (uint8 i = 128; i >= 1; i >>= 1) {
             if (val & (ONE << i) - 1 == 0) {
                 lowest += i;
