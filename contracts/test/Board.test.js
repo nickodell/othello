@@ -6,8 +6,8 @@ const WHITE = "3";
 contract("Board", async accounts => {
     it("get correct initial state", async () => {
         board = await Board.deployed();
-        gameState = (await board.gameState()).toString();
-        console.log(gameState)
+        // gameState = (await board.gameState()).toString();
+        // console.log(gameState)
         firstTile = (await board.getTile(0, 0)).toString();
         assert.equal(firstTile, EMPTY, "value at 0,0 wrong");
 
@@ -21,4 +21,44 @@ contract("Board", async accounts => {
         assert.equal(center3, BLACK, "value at 3,4 wrong");
         assert.equal(center4, WHITE, "value at 4,4 wrong");
     });
+    // This test takes a really long time.
+    // To run it, uncomment it and change setTile to public.
+
+    // it("can have every cell set and read", async () => {
+    //     board = await Board.deployed();
+    //     // Clear board
+    //     for(x = 0; x < 8; x++) {
+    //         for(y = 0; y < 8; y++) {
+    //             await board.setTile(x, y, 0);
+    //             console.log("Setting", x, y);
+    //         }
+    //     }
+    //     // Go to every cell, and check that it can be set without affecting other tiles
+    //     for(x = 0; x < 8; x++) {
+    //         for(y = 0; y < 8; y++) {
+    //             beforeModification = (await board.getTile(x, y)).toString();
+    //             assert.equal(beforeModification, EMPTY, "Cell is not empty first");
+    //             console.log("cell is empty", x, y);
+
+    //             // Set tile to white
+    //             await board.setTile(x, y, 3);
+    //             afterModification = (await board.getTile(x, y)).toString();
+    //             assert.equal(afterModification, WHITE, "Cell is not white after being set white");
+    //             console.log("cell is white", x, y);
+
+    //             // Check that all other cells are empty
+    //             for(x2 = 0; x2 < 8; x2++) {
+    //                 for(y2 = 0; y2 < 8; y2++) {
+    //                     // This is the cell we just set, ignore it
+    //                     if(x == x2 && y == y2) continue;
+    //                     emptyTile = (await board.getTile(x2, y2)).toString();
+    //                     assert.equal(emptyTile, EMPTY, "Setting cell to white changed another cell");
+    //                 }
+    //             }
+
+    //             // Set tile back to empty
+    //             await board.setTile(x, y, 0);
+    //         }
+    //     }
+    // });
 });
