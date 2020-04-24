@@ -87,6 +87,23 @@ library Bits {
         return self >> startIndex & ONES >> 256 - numBits;
     }
 
+    // Sets 'numBits' consecutive bits from 'self', starting from the bit at 'startIndex'.
+    // Uses newValue to 
+    // Returns the new bitfield.
+    // Requires that:
+    //  - '0 < numBits <= 256'
+    //  - 'startIndex < 256'
+    //  - 'numBits + startIndex <= 256'
+    function setBits(uint self, uint8 startIndex, uint16 numBits, uint newValue) internal pure returns (uint) {
+        require(0 < numBits && startIndex < 256 && startIndex + numBits <= 256);
+        uint maskInv = (uint(1) << numBits) - 1;
+        uint newValueShifted = (newValue << startIndex) & maskInv;
+        uint mask = ~maskInv;
+        uint maskShifted = mask << startIndex;
+        uint selfCleared = maskShifted & self;
+        return selfCleared | newValueShifted;
+    }
+
     // Computes the index of the highest bit set in 'self'.
     // Returns the highest bit set as an 'uint8'.
     // Requires that 'self != 0'.
