@@ -21,6 +21,21 @@ contract("Board", async accounts => {
         assert.equal(center3, BLACK, "value at 3,4 wrong");
         assert.equal(center4, WHITE, "value at 4,4 wrong");
     });
+    it("can be queried with getTiles", async () => {
+        correctBoard = [
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 3, 1, 0, 0, 0],
+                [0, 0, 0, 1, 3, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+            ].flat();
+        board = await Board.deployed();
+        gameState = (await board.getTiles()).toString();
+        assert.equal(gameState, correctBoard, "initial game state is incorrect");
+    });
     // This test takes a really long time.
     // To run it, uncomment it and change setTile to public.
 

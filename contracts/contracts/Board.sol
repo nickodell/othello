@@ -43,6 +43,14 @@ contract Board {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, 2));
     }
+    function getTiles() public view returns (uint8[64] memory board) {
+        // Return array of board values, 1 per space
+        uint8 flatCoord = 0;
+        for(uint8 bitCoord = 0; bitCoord < 128; bitCoord += 2) {
+            board[flatCoord] = uint8(gameState.bits(bitCoord, 2));
+            flatCoord++;
+        }
+    }
     function debug() public view returns (uint128) {
         // return gameState.bits(0, 2);
         return gameState;
