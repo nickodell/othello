@@ -25,23 +25,22 @@ contract Board {
         setTile(3, 4, BLACK);
         setTile(4, 4, WHITE);
     }
+    function getBitfieldCoordinate(uint8 x, uint8 y) internal pure returns (uint8 bitCoord) {
+        // Is x and y in the range 0 to 7?
+        assert(0 <= x && x < BOARD_SIZE);
+        assert(0 <= y && y < BOARD_SIZE);
+        uint8 flatCoord = x + (8 * y);
+        bitCoord = 2 * flatCoord;
+        return bitCoord;
+    }
     function setTile(uint8 x, uint8 y, uint8 value) internal {
         // Is it a valid tile?
         assert(value == EMPTY || value == BLACK || value == WHITE);
-
-        // Is x and y in the range 0 to 7?
-        assert(0 <= x && x < BOARD_SIZE);
-        assert(0 <= y && y < BOARD_SIZE);
-        uint8 flatCoord = x + (8 * y);
-        uint8 bitCoord = 2 * flatCoord;
+        uint8 bitCoord = getBitfieldCoordinate(x, y);
         gameState = gameState.setBits(bitCoord, 2, value);
     }
     function getTile(uint8 x, uint8 y) public view returns (uint8 value) {
-        // Is x and y in the range 0 to 7?
-        assert(0 <= x && x < BOARD_SIZE);
-        assert(0 <= y && y < BOARD_SIZE);
-        uint8 flatCoord = x + (8 * y);
-        uint8 bitCoord = 2 * flatCoord;
+        uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, 2));
     }
 }
