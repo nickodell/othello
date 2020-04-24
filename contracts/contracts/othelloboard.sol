@@ -1,7 +1,6 @@
 pragma solidity >=0.5.0 <0.6.0;
 
-contract othelloboard{
-    
+contract othelloboard {
     function initializeBoard() internal returns (uint32[64] memory){
         uint32[64] memory board;
         board[27]=1;

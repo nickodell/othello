@@ -24,7 +24,7 @@ contract othellofactory is othelloboard{
 
     function viewNumberOfPlayers() public view returns (uint){
         return playerCount;
-    } 
+    }
     
     function register(string memory name) public{
         playerCount=allplayers.push(name);
@@ -37,15 +37,14 @@ contract othellofactory is othelloboard{
        require(msg.sender!=playerIdToAddress[opponentPlayerId]); 
        uint32[64] memory board=initializeBoard();
        uint gameid=existingGames.push(Game(addressToPlayerName[msg.sender], addressToPlayerName[playerIdToAddress[opponentPlayerId]],board))-1;
-    //   playerToExistingGames[msg.sender]=gameid;
+       // playerToExistingGames[msg.sender]=gameid;
        playerToExistingGames[playerIdToAddress[opponentPlayerId]].push(existingGames[gameid]);
        playerToExistingGames[msg.sender].push(existingGames[gameid]);
-
-   }
+    }
    
-  function getMyGames() public view returns(Game[] memory){
-      return playerToExistingGames[msg.sender];
-  }
+    function getMyGames() public view returns(Game[] memory){
+        return playerToExistingGames[msg.sender];
+    }
 
 
 }
