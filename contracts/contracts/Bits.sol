@@ -98,9 +98,9 @@ library Bits128 {
         require(0 < numBits && startIndex < 128 && startIndex + numBits <= 128);
         uint128 maskInv = (uint128(1) << numBits) - 1;
         uint128 newValueShifted = (newValue & maskInv) << startIndex;
-        uint128 mask = ~maskInv;
-        uint128 maskShifted = mask << startIndex;
-        uint128 selfCleared = maskShifted & self;
+        uint128 maskInvShifted = maskInv << startIndex;
+        uint128 mask = ~maskInvShifted;
+        uint128 selfCleared = mask & self;
         return selfCleared | newValueShifted;
     }
 
