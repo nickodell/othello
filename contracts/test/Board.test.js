@@ -37,7 +37,7 @@ contract("Board", async accounts => {
         assert.equal(gameState, correctBoard, "initial game state is incorrect");
     });
     // This test takes a really long time.
-    // To run it, uncomment it and change setTile to public.
+    // To run it, uncomment it and change Board.setTile to public.
 
     // it("can have every cell set and read", async () => {
     //     board = await Board.deployed();
