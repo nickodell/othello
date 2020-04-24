@@ -79,23 +79,23 @@ library Bits128 {
     // Gets 'numBits' consecutive bits from 'self', starting from the bit at 'startIndex'.
     // Returns the bits as a 'uint128'.
     // Requires that:
-    //  - '0 < numBits <= 256'
-    //  - 'startIndex < 256'
-    //  - 'numBits + startIndex <= 256'
+    //  - '0 < numBits <= 128'
+    //  - 'startIndex < 128'
+    //  - 'numBits + startIndex <= 128'
     function bits(uint128 self, uint8 startIndex, uint16 numBits) internal pure returns (uint128) {
-        require(0 < numBits && startIndex < 256 && startIndex + numBits <= 256);
-        return self >> startIndex & ONES >> 256 - numBits;
+        require(0 < numBits && startIndex < 128 && startIndex + numBits <= 128);
+        return self >> startIndex & ONES >> 128 - numBits;
     }
 
     // Sets 'numBits' consecutive bits from 'self', starting from the bit at 'startIndex'.
     // Uses newValue to 
     // Returns the new bitfield.
     // Requires that:
-    //  - '0 < numBits <= 256'
-    //  - 'startIndex < 256'
-    //  - 'numBits + startIndex <= 256'
+    //  - '0 < numBits <= 128'
+    //  - 'startIndex < 128'
+    //  - 'numBits + startIndex <= 128'
     function setBits(uint128 self, uint8 startIndex, uint16 numBits, uint128 newValue) internal pure returns (uint128) {
-        require(0 < numBits && startIndex < 256 && startIndex + numBits <= 256);
+        require(0 < numBits && startIndex < 128 && startIndex + numBits <= 128);
         uint128 maskInv = (uint128(1) << numBits) - 1;
         uint128 newValueShifted = (newValue << startIndex) & maskInv;
         uint128 mask = ~maskInv;
