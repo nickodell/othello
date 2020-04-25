@@ -195,6 +195,19 @@ contract Board {
         }
         return true;
     }
+    function getValidMoves() public view returns (bool[64] memory validMoves, bool whiteToMove) {
+        // Return list of cells with valid moves.
+        uint8 i = 0;
+        for(int8 y = 0; y < BOARD_SIZE; y++) {
+            for(int8 x = 0; x < BOARD_SIZE; x++) {
+                validMoves[i] = isValidMove(x, y, whitesMove);
+                i++;
+            }
+        }
+
+        // Also tell the caller whose move it is, so they don't display legal moves for the other player.
+        whiteToMove = whitesMove;
+    }
     function getName(bool isWhite) public view returns (string memory) {
         uint playerIndex = isWhite ? 1 : 0;
         return playerNames[playerIndex];
