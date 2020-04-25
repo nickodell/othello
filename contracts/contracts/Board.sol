@@ -256,6 +256,9 @@ contract Board {
                 }
             }
         }
+
+        // It's now the other player's move
+        whitesMove = !whitesMove;
     }
     function getName(bool isWhite) public view returns (string memory) {
         uint playerIndex = isWhite ? 1 : 0;
