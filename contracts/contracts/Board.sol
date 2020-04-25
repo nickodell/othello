@@ -15,15 +15,19 @@ contract Board {
     address[2] playerAddresses;
     uint128 public gameState;
     bool whitesMove;
+    bool debugMode;
+
+    // This allows us to call methods from Bits.sol on a uint128
     using Bits128 for uint128;
 
-    constructor(address blackPlayer, address whitePlayer, string memory blackName, string memory whiteName) public {
+    constructor(address blackPlayer, address whitePlayer, string memory blackName, string memory whiteName, bool _debugMode) public {
         initializeBoard();
         whitesMove = false;
         playerAddresses[0] = blackPlayer;
         playerAddresses[1] = whitePlayer;
         playerNames[0] = blackName;
         playerNames[1] = whiteName;
+        debugMode = _debugMode;
     }
     function initializeBoard() internal {
         // Clear board
@@ -47,7 +51,7 @@ contract Board {
 
         // Here's a diagram: https://docs.unity3d.com/StaticFiles/ScriptRefImages/RectXY.svg
 
-        // This cast is safe because x and y cannot be negative at this point
+        // This uint8 cast is safe because x and y cannot be negative at this point
         uint8 flatCoord = uint8(x + (BOARD_SIZE * y));
         bitCoord = BITS_PER_CELL * flatCoord;
         return bitCoord;
@@ -104,7 +108,7 @@ contract Board {
         // Checked all neighbors, no piece found.
         return false;
     }
-    function searchForCapturablePiecesInDirection(int8 x, int8 y, 
+    function searchForCapturablePiecesInDirection(int8 x, int8 y,
                                                   int8 delta_x, int8 delta_y,
                                                   uint8 enemyColor, uint8 friendlyColor) public view returns (bool) {
         // Delta value of 0,0 will cause an infinite loop.
@@ -207,6 +211,51 @@ contract Board {
 
         // Also tell the caller whose move it is, so they don't display legal moves for the other player.
         whiteToMove = whitesMove;
+    }
+    function traverseAndFlip(int8 x, int8 y,
+                             int8 delta_x, int8 delta_y,
+                             uint8 enemyColor, uint8 friendlyColor) internal {
+        // Note: This function assumes that the caller has already checked whether it is legal to
+        // capture in this direction, by using searchForCapturablePiecesInDirection().
+        x += delta_x;
+        y += delta_y;
+        while(moveIsOnBoard(x, y) && getTile(x, y) == enemyColor) {
+            setTile(x, y, friendlyColor);
+            x += delta_x;
+            y += delta_y;
+        }
+    }
+    function playMove(int8 x, int8 y, bool isWhite) public {
+        // Is it our turn?
+        assert(isWhite == whitesMove);
+
+        // Is this a valid move?
+        assert(isValidMove(x, y, isWhite));
+
+        // Is this wallet authorized to make a move for this player?
+        if(!debugMode) {
+            assert(getAddress(isWhite) == msg.sender);
+        }
+
+        // The move is valid, so play it. Place our tile on the board. Then, search in every direction
+        // for capturable pieces, and flip them to our color.
+        uint8 enemyColor = isWhite ? BLACK : WHITE;
+        uint8 friendlyColor = isWhite ? WHITE : BLACK;
+
+        setTile(x, y, friendlyColor);
+
+        for(int8 delta_x = -1; delta_x <= 1; delta_x += 1) {
+            for(int8 delta_y = -1; delta_y <= 1; delta_y += 1) {
+                if(delta_x == 0 && delta_y == 0) {
+                    // This direction does nothing. Skip it.
+                    continue;
+                }
+                if(searchForCapturablePiecesInDirection(x, y, delta_x, delta_y, enemyColor, friendlyColor)) {
+                    // We can capture in this direction.
+                    traverseAndFlip(x, y, delta_x, delta_y, enemyColor, friendlyColor);
+                }
+            }
+        }
     }
     function getName(bool isWhite) public view returns (string memory) {
         uint playerIndex = isWhite ? 1 : 0;
