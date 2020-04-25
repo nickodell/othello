@@ -68,6 +68,60 @@ contract Board {
             flatCoord++;
         }
     }
+    function moveIsOnBoard(uint8 x, uint8 y) public pure returns (bool) {
+        if(0 > x || x >= BOARD_SIZE) {
+            return false;
+        }
+        if(0 > y || y >= BOARD_SIZE) {
+            return false;
+        }
+        return true;
+    }
+    function cellHasNeighboringPiece(uint8 x, uint8 y) public view returns (bool) {
+        // Search all eight neighboring spaces.
+        for(uint8 delta_x = -1; delta_x <= 1; delta_x += 1) {
+            for(uint8 delta_y = -1; delta_y <= 1; delta_y += 1) {
+                if(delta_x == 0 && delta_y == 0) {
+                    // This is the spot where the piece is placed,
+                    // so don't check it.
+                    continue;
+                }
+
+                // Don't check for pieces off the board.
+                if(!moveIsOnBoard(x + delta_x, y + delta_y)) {
+                    continue;
+                }
+
+                if(getTile(x + delta_x, y + delta_y) != EMPTY) {
+                    // We found a piece, so there is a piece neighboring
+                    // this square.
+                    return true;
+                }
+            }
+        }
+        // Checked all neighbors, no piece found.
+        return false
+    }
+    function isMoveValid(uint8 x, uint8 y, bool isWhite) public view returns (bool) {
+        // 1. Is the move on the board? If not, illegal.
+        if(!moveIsOnBoard(x, y)) {
+            return false;
+        }
+
+        // 2. Is the space empty? If not, illegal.
+        if(getTile(x, y) != EMPTY) {
+            return false;
+        }
+
+        // 3. Is it next to another piece? If not, illegal.
+        if(!cellHasNeighboringEnemyPiece(x, y)) {
+            return false;
+        }
+
+        // 4. Will you capture another piece if you move there? If not, illegal.
+
+        return true;
+    }
     function getName(bool getWhiteName) public view returns (string memory) {
         uint playerIndex = getWhiteName ? 1 : 0;
         return playerNames[playerIndex];
