@@ -170,7 +170,7 @@ contract Board {
         // We didn't find any pieces to capture, in any direction
         return false;
     }
-    function isMoveValid(int8 x, int8 y, bool isWhite) public view returns (bool) {
+    function isValidMove(int8 x, int8 y, bool isWhite) public view returns (bool) {
         uint8 enemyColor = isWhite ? BLACK : WHITE;
         uint8 friendlyColor = isWhite ? WHITE : BLACK;
 
