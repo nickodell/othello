@@ -38,6 +38,14 @@ contract Board {
         // Is x and y in the range 0 to 7?
         assert(0 <= x && x < BOARD_SIZE);
         assert(0 <= y && y < BOARD_SIZE);
+
+        // We need to take a 2-dimensional coordinate and change it into a 1-dimensional coordinate.
+        // To do this, we decide that all cells with the same y value will be next to each other,
+        // followed by the cells with the next y value. If you use x to represent the column number, and
+        // use y to represent the row number, then the cells are stored in the same order as you would
+        // read them in a book, reading right-to-left and top-to-bottom.
+
+        // Here's a diagram: https://docs.unity3d.com/StaticFiles/ScriptRefImages/RectXY.svg
         uint8 flatCoord = x + (BOARD_SIZE * y);
         bitCoord = BITS_PER_CELL * flatCoord;
         return bitCoord;
