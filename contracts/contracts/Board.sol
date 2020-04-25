@@ -7,7 +7,7 @@ contract Board {
     uint8 constant internal EMPTY = 0;
     uint8 constant internal BLACK = 1;
     uint8 constant internal WHITE = 3;
-    uint8 constant internal BOARD_SIZE = 8;
+    int8 constant internal BOARD_SIZE = 8;
     uint8 constant internal BITS_PER_CELL = 2;
     // Also equal to BOARD_SIZE * BOARD_SIZE * BITS_PER_CELL
     uint8 constant internal BITFIELD_SIZE = 128;
@@ -34,7 +34,7 @@ contract Board {
         setTile(3, 4, BLACK);
         setTile(4, 4, WHITE);
     }
-    function getBitfieldCoordinate(uint8 x, uint8 y) internal pure returns (uint8 bitCoord) {
+    function getBitfieldCoordinate(int8 x, int8 y) internal pure returns (uint8 bitCoord) {
         // Is x and y in the range 0 to 7?
         assert(0 <= x && x < BOARD_SIZE);
         assert(0 <= y && y < BOARD_SIZE);
@@ -46,17 +46,19 @@ contract Board {
         // read them in a book, reading right-to-left and top-to-bottom.
 
         // Here's a diagram: https://docs.unity3d.com/StaticFiles/ScriptRefImages/RectXY.svg
-        uint8 flatCoord = x + (BOARD_SIZE * y);
+
+        // This cast is safe because x and y cannot be negative at this point
+        uint8 flatCoord = uint8(x + (BOARD_SIZE * y));
         bitCoord = BITS_PER_CELL * flatCoord;
         return bitCoord;
     }
-    function setTile(uint8 x, uint8 y, uint8 value) internal {
+    function setTile(int8 x, int8 y, uint8 value) internal {
         // Is it a valid tile?
         assert(value == EMPTY || value == BLACK || value == WHITE);
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         gameState = gameState.setBits(bitCoord, BITS_PER_CELL, value);
     }
-    function getTile(uint8 x, uint8 y) public view returns (uint8 value) {
+    function getTile(int8 x, int8 y) public view returns (uint8 value) {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, BITS_PER_CELL));
     }
@@ -68,7 +70,7 @@ contract Board {
             flatCoord++;
         }
     }
-    function moveIsOnBoard(uint8 x, uint8 y) public pure returns (bool) {
+    function moveIsOnBoard(int8 x, int8 y) public pure returns (bool) {
         if(0 > x || x >= BOARD_SIZE) {
             return false;
         }
@@ -77,12 +79,12 @@ contract Board {
         }
         return true;
     }
-    function cellHasNeighboringPiece(uint8 x, uint8 y) public view returns (bool) {
+    function cellHasNeighboringEnemyPiece(int8 x, int8 y, uint8 enemyColor) public view returns (bool) {
         // Search all eight neighboring spaces.
-        for(uint8 delta_x = -1; delta_x <= 1; delta_x += 1) {
-            for(uint8 delta_y = -1; delta_y <= 1; delta_y += 1) {
+        for(int8 delta_x = -1; delta_x <= 1; delta_x += 1) {
+            for(int8 delta_y = -1; delta_y <= 1; delta_y += 1) {
                 if(delta_x == 0 && delta_y == 0) {
-                    // This is the spot where the piece is placed,
+                    // This is the spot where the piece will be placed,
                     // so don't check it.
                     continue;
                 }
@@ -92,17 +94,86 @@ contract Board {
                     continue;
                 }
 
-                if(getTile(x + delta_x, y + delta_y) != EMPTY) {
-                    // We found a piece, so there is a piece neighboring
+                if(getTile(x + delta_x, y + delta_y) == enemyColor) {
+                    // We found a piece, so there is an enemy piece neighboring
                     // this square.
                     return true;
                 }
             }
         }
         // Checked all neighbors, no piece found.
-        return false
+        return false;
     }
-    function isMoveValid(uint8 x, uint8 y, bool isWhite) public view returns (bool) {
+    function searchForCapturablePiecesInDirection(int8 x, int8 y, 
+                                                  int8 delta_x, int8 delta_y,
+                                                  uint8 enemyColor, uint8 friendlyColor) public view returns (bool) {
+        // Delta value of 0,0 will cause an infinite loop.
+        assert(!(delta_x == 0 && delta_y == 0));
+
+        // Have we found an enemy piece yet?
+        bool foundEnemyPiece = false;
+
+        // x and y represent the coordinates of the piece to be placed. Add the deltas
+        // so that we take one step away from the piece-to-be-placed.
+        x += delta_x;
+        y += delta_y;
+        while(moveIsOnBoard(x, y)) {
+            if(foundEnemyPiece) {
+                // We found an enemy piece on a previous run through this loop.
+
+                uint8 tile = getTile(x, y);
+                if(tile == enemyColor) {
+                    // Found another enemy piece. Keep looping.
+                } else if(tile == friendlyColor) {
+                    // We found an enemy piece followed by a friendly piece.
+                    // We can capture.
+                    return true;
+                } else {
+                    // Found an empty space. We can't capture.
+                    return false;
+                }
+            } else {
+                // First run through the loop
+
+                if(getTile(x, y) == enemyColor) {
+                    // We found an enemy piece. We could capture it if there's a friendly piece
+                    // at the end.
+                    foundEnemyPiece = true;
+                } else {
+                    // We found a friendly piece or an empty cell, without finding any enemy pieces
+                    // in between. Therefore, we can't capture in this direction.
+                    return false;
+                }
+            }
+            x += delta_x;
+            y += delta_y;
+        }
+        // We went off the board without finding a friendly piece. Therefore, we can't capture
+        // in this direction.
+        return false;
+    }
+    function searchForCapturablePieces(int8 x, int8 y, uint8 enemyColor, uint8 friendlyColor) public view returns (bool) {
+        // Loop over all directions
+        for(int8 delta_x = -1; delta_x <= 1; delta_x += 1) {
+            for(int8 delta_y = -1; delta_y <= 1; delta_y += 1) {
+                if(delta_x == 0 && delta_y == 0) {
+                    // This direction does nothing. Skip it.
+                    continue;
+                }
+                if(searchForCapturablePiecesInDirection(x, y, delta_x, delta_y, enemyColor, friendlyColor)) {
+                    // We can capture in this direction. Since we only need to find one direction to
+                    // capture in, we're done.
+                    return true;
+                }
+            }
+        }
+        // We didn't find any pieces to capture, in any direction
+        return false;
+    }
+    function isMoveValid(int8 x, int8 y, bool isWhite) public view returns (bool) {
+        uint8 enemyColor = isWhite ? BLACK : WHITE;
+        uint8 friendlyColor = isWhite ? WHITE : BLACK;
+
         // 1. Is the move on the board? If not, illegal.
         if(!moveIsOnBoard(x, y)) {
             return false;
@@ -113,21 +184,23 @@ contract Board {
             return false;
         }
 
-        // 3. Is it next to another piece? If not, illegal.
-        if(!cellHasNeighboringEnemyPiece(x, y)) {
+        // 3. Is it next to another enemy piece? If not, illegal.
+        if(!cellHasNeighboringEnemyPiece(x, y, enemyColor)) {
             return false;
         }
 
         // 4. Will you capture another piece if you move there? If not, illegal.
-
+        if(!searchForCapturablePieces(x, y, enemyColor, friendlyColor)) {
+            return false;
+        }
         return true;
     }
     function getName(bool isWhite) public view returns (string memory) {
-        uint playerIndex = getWhiteName ? 1 : 0;
+        uint playerIndex = isWhite ? 1 : 0;
         return playerNames[playerIndex];
     }
     function getAddress(bool isWhite) public view returns (address) {
-        uint playerIndex = getWhiteAddress ? 1 : 0;
+        uint playerIndex = isWhite ? 1 : 0;
         return playerAddresses[playerIndex];
     }
     function debug() public view returns (uint128) {
