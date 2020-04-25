@@ -36,6 +36,24 @@ contract("Board", async accounts => {
         gameState = (await board.getTiles()).toString();
         assert.equal(gameState, correctBoard, "initial game state is incorrect");
     });
+    it("tracks player names", async () => {
+        board = await Board.deployed();
+        player1 = await board.getName(false);
+        player2 = await board.getName(true);
+
+        // See 2_deploy_contracts.js for where these values come from
+        assert.equal(player1, "Mr. Black");
+        assert.equal(player2, "Mr. White");
+    });
+    it("tracks player addresses", async () => {
+        board = await Board.deployed();
+        player1 = await board.getAddress(false);
+        player2 = await board.getAddress(true);
+
+        // See 2_deploy_contracts.js for where these values come from
+        assert.equal(player1, "0x4C56F72016bcc5C8E812aB20374990D126d22945");
+        assert.equal(player2, "0xC83AB1F7Ff09662301cA2bee89FA905A36e11F07");
+    });
     // This test takes a really long time.
     // To run it, uncomment it and change Board.setTile to public.
 

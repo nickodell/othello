@@ -14,15 +14,21 @@ contract Board {
     string[2] playerNames;
     address[2] playerAddresses;
     uint128 public gameState;
+    bool whitesMove;
     using Bits128 for uint128;
 
-    constructor() public {
+    constructor(address blackPlayer, address whitePlayer, string memory blackName, string memory whiteName) public {
         initializeBoard();
+        whitesMove = false;
+        playerAddresses[0] = blackPlayer;
+        playerAddresses[1] = whitePlayer;
+        playerNames[0] = blackName;
+        playerNames[1] = whiteName;
     }
     function initializeBoard() internal {
         // Clear board
         gameState = 0;
-        // set middle tiles
+        // Set middle tiles
         setTile(3, 3, WHITE);
         setTile(4, 3, BLACK);
         setTile(3, 4, BLACK);
@@ -54,8 +60,17 @@ contract Board {
             flatCoord++;
         }
     }
+    function getName(bool getWhiteName) public view returns (string memory) {
+        uint playerIndex = getWhiteName ? 1 : 0;
+        return playerNames[playerIndex];
+    }
+    function getAddress(bool getWhiteAddress) public view returns (address) {
+        uint playerIndex = getWhiteAddress ? 1 : 0;
+        return playerAddresses[playerIndex];
+    }
     function debug() public view returns (uint128) {
         // return gameState.bits(0, 2);
         return gameState;
     }
+
 }
