@@ -3,6 +3,15 @@ const EMPTY = "0";
 const BLACK = "1";
 const WHITE = "3";
 
+// returns 2D array grouped into groups of size
+function unflatten(array, size) {
+    const newArray = [];
+    while (array.length > 0) {
+        newArray.push(array.splice(0, size));
+    }
+    return newArray
+}
+
 contract("Board", async accounts => {
     it("get correct initial state", async () => {
         board = await Board.deployed();
@@ -53,6 +62,35 @@ contract("Board", async accounts => {
         // See 2_deploy_contracts.js for where these values come from
         assert.equal(player1, "0x4C56F72016bcc5C8E812aB20374990D126d22945");
         assert.equal(player2, "0xC83AB1F7Ff09662301cA2bee89FA905A36e11F07");
+    });
+    it("checks valid moves", async () => {
+        board = await Board.deployed();
+        // You can go next to the white piece...
+        isValid = await board.isValidMove(2, 3, false);
+        assert.equal(isValid, true);
+        // ...but not in the corner
+        isValid = await board.isValidMove(0, 0, false);
+        assert.equal(isValid, false);
+    });
+    it("can get all valid moves at once", async () => {
+        board = await Board.deployed();
+        let F = false;
+        let T = true;
+        correctValidMoves = [
+            [F, F, F, F, F, F, F, F],
+            [F, F, F, F, F, F, F, F],
+            [F, F, F, T, F, F, F, F],
+            [F, F, T, F, F, F, F, F],
+            [F, F, F, F, F, T, F, F],
+            [F, F, F, F, T, F, F, F],
+            [F, F, F, F, F, F, F, F],
+            [F, F, F, F, F, F, F, F],
+        ];
+        let value = await board.getValidMoves();
+        let [validMoves, whitesMove] = [value['0'], value['1']]
+        validMoves = unflatten(validMoves, 8);
+        assert.equal(whitesMove, false);
+        assert.deepEqual(correctValidMoves, validMoves);
     });
     // This test takes a really long time.
     // To run it, uncomment it and change Board.setTile to public.
