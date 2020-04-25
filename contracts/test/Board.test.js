@@ -84,23 +84,74 @@ contract("Board", async accounts => {
     });
     it("can get all valid moves at once", async () => {
         board = await Board.deployed();
-        let F = false;
+        let _ = false;
         let T = true;
         correctValidMoves = [
-            [F, F, F, F, F, F, F, F],
-            [F, F, F, F, F, F, F, F],
-            [F, F, F, T, F, F, F, F],
-            [F, F, T, F, F, F, F, F],
-            [F, F, F, F, F, T, F, F],
-            [F, F, F, F, T, F, F, F],
-            [F, F, F, F, F, F, F, F],
-            [F, F, F, F, F, F, F, F],
-        ];
+                [_, _, _, _, _, _, _, _],
+                [_, _, _, _, _, _, _, _],
+                [_, _, _, T, _, _, _, _],
+                [_, _, T, _, _, _, _, _],
+                [_, _, _, _, _, T, _, _],
+                [_, _, _, _, T, _, _, _],
+                [_, _, _, _, _, _, _, _],
+                [_, _, _, _, _, _, _, _],
+            ];
         let value = await board.getValidMoves();
         let [validMoves, whitesMove] = [value['0'], value['1']]
         validMoves = unflatten(validMoves, 8);
         assert.equal(whitesMove, false);
         assert.deepEqual(correctValidMoves, validMoves);
+    });
+    it("lets black can make a move", async () => {
+        board = await Board.deployed();
+        await board.playMove(2, 3, false);
+        correctBoard = [
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 0, 0, 0],
+                [0, 0, 0, 1, 3, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+            ];
+        tiles = unflatten(convertToNumber(await board.getTiles()), 8);
+        assert.deepEqual(correctBoard, tiles, "state after black moves is incorrect");
+    });
+    it("lets white make a counter move", async () => {
+        // Note: state is shared between this test and previous test
+        board = await Board.deployed();
+
+        // Check white's moves
+        let value = await board.getValidMoves();
+        let [validMoves, whitesMove] = [value['0'], value['1']];
+        validMoves = unflatten(validMoves, 8);
+        let _ = false;
+        let T = true;
+        correctValidMoves = [
+                [_, _, _, _, _, _, _, _],
+                [_, _, _, _, _, _, _, _],
+                [_, _, T, _, T, _, _, _],
+                [_, _, _, _, _, _, _, _],
+                [_, _, T, _, _, _, _, _],
+                [_, _, _, _, _, _, _, _],
+                [_, _, _, _, _, _, _, _],
+                [_, _, _, _, _, _, _, _],
+            ];
+        assert.deepEqual(correctValidMoves, validMoves, "white's legal move list is wrong");
+        await board.playMove(2, 2, true);
+        correctBoard = [
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 3, 0, 0, 0, 0, 0],
+                [0, 0, 1, 3, 1, 0, 0, 0],
+                [0, 0, 0, 1, 3, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+            ];
+        tiles = unflatten(convertToNumber(await board.getTiles()), 8);
+        assert.deepEqual(correctBoard, tiles, "state after white moves is incorrect");
     });
     // This test takes a really long time.
     // To run it, uncomment it and change Board.setTile to public.
