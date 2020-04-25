@@ -88,7 +88,7 @@ library Bits128 {
     }
 
     // Sets 'numBits' consecutive bits from 'self', starting from the bit at 'startIndex'.
-    // Uses newValue to 
+    // Uses 'newValue' to set the bits.
     // Returns the new bitfield.
     // Requires that:
     //  - '0 < numBits <= 128'
