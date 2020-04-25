@@ -3,6 +3,15 @@ const EMPTY = "0";
 const BLACK = "1";
 const WHITE = "3";
 
+
+function convertToNumber(array) {
+    // Converts from BN.js bignum into javascript number
+    for (var i = 0; i < array.length; i++) {
+        array[i] = array[i].toNumber();
+    }
+    return array
+}
+
 // returns 2D array grouped into groups of size
 function unflatten(array, size) {
     const newArray = [];
@@ -40,10 +49,11 @@ contract("Board", async accounts => {
                 [0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0],
-            ].flat();
+            ];
         board = await Board.deployed();
-        gameState = (await board.getTiles()).toString();
-        assert.equal(gameState, correctBoard, "initial game state is incorrect");
+        // console.log(await board.getTiles());
+        gameState = unflatten(convertToNumber(await board.getTiles()), 8);
+        assert.deepEqual(gameState, correctBoard, "initial game state is incorrect");
     });
     it("tracks player names", async () => {
         board = await Board.deployed();
