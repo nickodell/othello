@@ -122,11 +122,11 @@ contract Board {
 
         return true;
     }
-    function getName(bool getWhiteName) public view returns (string memory) {
+    function getName(bool isWhite) public view returns (string memory) {
         uint playerIndex = getWhiteName ? 1 : 0;
         return playerNames[playerIndex];
     }
-    function getAddress(bool getWhiteAddress) public view returns (address) {
+    function getAddress(bool isWhite) public view returns (address) {
         uint playerIndex = getWhiteAddress ? 1 : 0;
         return playerAddresses[playerIndex];
     }
