@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { getWeb3Instance } from '../actions/Actions';
 
 class Web3Container extends Component {
-    componentDidMount() {
-        this.props.getWeb3Instance();
+    async componentDidMount() {
+        await this.props.getWeb3Instance();
         console.log('Account: ' + this.props.account);
         console.log('Network ID: ' + this.props.networkId) 
     }

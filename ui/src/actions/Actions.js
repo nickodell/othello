@@ -1,7 +1,7 @@
 import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES, GET_WEB3_INSTANCE } from './types';
 import getWeb3 from '../utils/getWeb3';
 
-export const getWeb3Instance = () => dispatch => {
+export const getWeb3Instance = () => async (dispatch) => {
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
