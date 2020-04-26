@@ -11,7 +11,6 @@ contract Board {
     uint8 constant internal BITS_PER_CELL = 2;
     // Also equal to BOARD_SIZE * BOARD_SIZE * BITS_PER_CELL
     uint8 constant internal BITFIELD_SIZE = 128;
-    string[2] playerNames;
     address[2] playerAddresses;
     uint128 public gameState;
     bool whitesMove;
@@ -20,23 +19,21 @@ contract Board {
     // This allows us to call methods from Bits.sol on a uint128
     using Bits128 for uint128;
 
-    constructor(address blackPlayer, address whitePlayer, string memory blackName, string memory whiteName, bool _debugMode) public {
-        initializeBoard();
-        whitesMove = false;
-        playerAddresses[0] = blackPlayer;
-        playerAddresses[1] = whitePlayer;
-        playerNames[0] = blackName;
-        playerNames[1] = whiteName;
-        debugMode = _debugMode;
-    }
-    function initializeBoard() internal {
+ 
+    function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) internal {
+        debugMode = _isNewGame;
+        playerAddresses[0]=blackAddress;
+        playerAddresses[1]=whiteAddress;
         // Clear board
-        gameState = 0;
+        gameState = state;
+        whitesMove = _isWhiteTurn;
         // Set middle tiles
-        setTile(3, 3, WHITE);
-        setTile(4, 3, BLACK);
-        setTile(3, 4, BLACK);
-        setTile(4, 4, WHITE);
+        if(_isNewGame==true){
+            setTile(3, 3, WHITE);
+            setTile(4, 3, BLACK);
+            setTile(3, 4, BLACK);
+            setTile(4, 4, WHITE);
+        }
     }
     function getBitfieldCoordinate(int8 x, int8 y) internal pure returns (uint8 bitCoord) {
         // Is x and y in the range 0 to 7?
@@ -62,11 +59,11 @@ contract Board {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         gameState = gameState.setBits(bitCoord, BITS_PER_CELL, value);
     }
-    function getTile(int8 x, int8 y) public view returns (uint8 value) {
+    function getTile(int8 x, int8 y) private view returns (uint8 value) {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, BITS_PER_CELL));
     }
-    function getTiles() public view returns (uint8[64] memory board) {
+    function getTiles() private view returns (uint8[64] memory board) {
         // Return array of board values, 1 per space
         uint8 flatCoord = 0;
         for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
@@ -74,7 +71,7 @@ contract Board {
             flatCoord++;
         }
     }
-    function moveIsOnBoard(int8 x, int8 y) public pure returns (bool) {
+    function moveIsOnBoard(int8 x, int8 y) private pure returns (bool) {
         if(0 > x || x >= BOARD_SIZE) {
             return false;
         }
@@ -83,7 +80,7 @@ contract Board {
         }
         return true;
     }
-    function cellHasNeighboringEnemyPiece(int8 x, int8 y, uint8 enemyColor) public view returns (bool) {
+    function cellHasNeighboringEnemyPiece(int8 x, int8 y, uint8 enemyColor) private view returns (bool) {
         // Search all eight neighboring spaces.
         for(int8 delta_x = -1; delta_x <= 1; delta_x += 1) {
             for(int8 delta_y = -1; delta_y <= 1; delta_y += 1) {
@@ -110,7 +107,7 @@ contract Board {
     }
     function searchForCapturablePiecesInDirection(int8 x, int8 y,
                                                   int8 delta_x, int8 delta_y,
-                                                  uint8 enemyColor, uint8 friendlyColor) public view returns (bool) {
+                                                  uint8 enemyColor, uint8 friendlyColor) private view returns (bool) {
         // Delta value of 0,0 will cause an infinite loop.
         assert(!(delta_x == 0 && delta_y == 0));
 
@@ -156,7 +153,7 @@ contract Board {
         // in this direction.
         return false;
     }
-    function searchForCapturablePieces(int8 x, int8 y, uint8 enemyColor, uint8 friendlyColor) public view returns (bool) {
+    function searchForCapturablePieces(int8 x, int8 y, uint8 enemyColor, uint8 friendlyColor) private view returns (bool) {
         // Loop over all directions
         for(int8 delta_x = -1; delta_x <= 1; delta_x += 1) {
             for(int8 delta_y = -1; delta_y <= 1; delta_y += 1) {
@@ -211,6 +208,7 @@ contract Board {
 
         // Also tell the caller whose move it is, so they don't display legal moves for the other player.
         whiteToMove = whitesMove;
+        return(validMoves, whiteToMove);
     }
     function traverseAndFlip(int8 x, int8 y,
                              int8 delta_x, int8 delta_y,
@@ -225,22 +223,16 @@ contract Board {
             y += delta_y;
         }
     }
-    function playMove(int8 x, int8 y, bool isWhite) public {
-        // Is it our turn?
-        assert(isWhite == whitesMove);
+    // function playMove(int8 x, int8 y, bool isWhite) public {
+    function playMove(int8 x, int8 y) public {
+        assert(isValidMove(x, y, whitesMove));
 
-        // Is this a valid move?
-        assert(isValidMove(x, y, isWhite));
-
-        // Is this wallet authorized to make a move for this player?
-        if(!debugMode) {
-            assert(getAddress(isWhite) == msg.sender);
-        }
+        assert(getAddress(whitesMove) == msg.sender);
 
         // The move is valid, so play it. Place our tile on the board. Then, search in every direction
         // for capturable pieces, and flip them to our color.
-        uint8 enemyColor = isWhite ? BLACK : WHITE;
-        uint8 friendlyColor = isWhite ? WHITE : BLACK;
+        uint8 enemyColor = whitesMove ? BLACK : WHITE;
+        uint8 friendlyColor = whitesMove ? WHITE : BLACK;
 
         setTile(x, y, friendlyColor);
 
@@ -260,17 +252,10 @@ contract Board {
         // It's now the other player's move
         whitesMove = !whitesMove;
     }
-    function getName(bool isWhite) public view returns (string memory) {
-        uint playerIndex = isWhite ? 1 : 0;
-        return playerNames[playerIndex];
-    }
-    function getAddress(bool isWhite) public view returns (address) {
+   
+    function getAddress(bool isWhite) private view returns (address) {
         uint playerIndex = isWhite ? 1 : 0;
         return playerAddresses[playerIndex];
-    }
-    function debug() public view returns (uint128) {
-        // return gameState.bits(0, 2);
-        return gameState;
     }
 
 }

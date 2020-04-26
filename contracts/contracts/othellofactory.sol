@@ -2,49 +2,85 @@ pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./othelloboard.sol";
-
-contract othellofactory is othelloboard{
+import "./Board.sol";
+contract othellofactory is Board{
     struct Game{
-        string player1;
-        string player2;
-        // address address1;
-        // address address2;
-        uint32[64] gameState;
+        string black;
+        string white;
+        address blackaddress;
+        address whiteaddress;
+        bool isWhiteTurn;
+        uint128 gameState;
     }
     
-    string[] private allplayers;
-    uint playerCount;
+    struct GameDetails{
+        uint gameid;
+        string opponent;
+    }
+    
+    struct Player{
+        uint playerid;
+        string name;
+    }
+    
+    // Board board;
+    
+    Player[] private allplayers;
+    uint playerCount=0;
+    
+    Game currentGame;
+    uint currentGameId;
     
     Game[] public existingGames;
     mapping (uint => address) playerIdToAddress;
-    mapping (address => uint) addressToPlayerid;
+    // mapping (address => uint) addressToPlayerid;
     mapping (address => string) addressToPlayerName;
-    mapping (uint32 => Game) gameIdToGames;
-    mapping (address => Game[]) playerToExistingGames;
+    mapping (address => bool) registeredAddresses;
+    mapping (address => GameDetails[]) playerToExistingGames;
 
-    function viewNumberOfPlayers() public view returns (uint){
-        return playerCount;
+
+    function viewPlayers() public view returns (Player[] memory){
+        return allplayers;
     }
     
     function register(string memory name) public{
-        playerCount=allplayers.push(name);
-        addressToPlayerid[msg.sender]=playerCount;
+        require(registeredAddresses[msg.sender]==false, "You are already registered!!");
+        allplayers.push(Player(playerCount,name));
+        playerCount+=1;
+        registeredAddresses[msg.sender]=true;
+        // addressToPlayerid[msg.sender]=playerCount;
         playerIdToAddress[playerCount]=msg.sender;
         addressToPlayerName[msg.sender]=name;
     }
    
    function createNewGame(uint opponentPlayerId) public{
        require(msg.sender!=playerIdToAddress[opponentPlayerId]); 
-       uint32[64] memory board=initializeBoard();
-       uint gameid=existingGames.push(Game(addressToPlayerName[msg.sender], addressToPlayerName[playerIdToAddress[opponentPlayerId]],board))-1;
+      currentGame.gameState=0;
+      currentGame=Game(addressToPlayerName[msg.sender], addressToPlayerName[playerIdToAddress[opponentPlayerId]],msg.sender,playerIdToAddress[opponentPlayerId],false,currentGame.gameState);
+      currentGameId=existingGames.push(currentGame)-1;
+      initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+
        // playerToExistingGames[msg.sender]=gameid;
-       playerToExistingGames[playerIdToAddress[opponentPlayerId]].push(existingGames[gameid]);
-       playerToExistingGames[msg.sender].push(existingGames[gameid]);
+      playerToExistingGames[playerIdToAddress[opponentPlayerId]].push(GameDetails(currentGameId,currentGame.black));
+      playerToExistingGames[msg.sender].push(GameDetails(currentGameId,currentGame.white));
     }
    
-    function getMyGames() public view returns(Game[] memory){
+    function getMyGames() public view returns(GameDetails[] memory){
         return playerToExistingGames[msg.sender];
     }
-
+    
+    function loadExistingGame(uint gameid) public returns (Game memory){
+        currentGameId=gameid;
+        currentGame =existingGames[gameid];
+        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+        return currentGame;
+        
+    }
+    
+    function saveGame() public{
+        currentGame.gameState=Board.gameState;
+        currentGame.isWhiteTurn=Board.whitesMove;
+        existingGames[currentGameId]=currentGame;
+    }
 
 }
