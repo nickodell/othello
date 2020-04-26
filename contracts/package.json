@@ -1,0 +1,20 @@
+{
+  "name": "othello-backend",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.9.1",
+    "mocha": "^7.1.1",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3": "^1.2.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
