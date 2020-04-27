@@ -4,6 +4,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import {Bits128} from "./Bits.sol";
 
 contract Board {
+    
     uint8 constant internal EMPTY = 0;
     uint8 constant internal BLACK = 1;
     uint8 constant internal WHITE = 3;
@@ -12,15 +13,15 @@ contract Board {
     // Also equal to BOARD_SIZE * BOARD_SIZE * BITS_PER_CELL
     uint8 constant internal BITFIELD_SIZE = 128;
     address[2] playerAddresses;
-    uint128 gameState;
-    bool  whitesMove;
+    uint128 public gameState;
+    bool whitesMove;
     bool debugMode;
 
     // This allows us to call methods from Bits.sol on a uint128
     using Bits128 for uint128;
 
  
-    function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) external {
+    function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) internal {
         debugMode = _isNewGame;
         playerAddresses[0]=blackAddress;
         playerAddresses[1]=whiteAddress;
@@ -171,7 +172,7 @@ contract Board {
         // We didn't find any pieces to capture, in any direction
         return false;
     }
-    function isValidMove(int8 x, int8 y, bool isWhite) public view returns (bool) {
+    function isValidMove(int8 x, int8 y, bool isWhite) internal view returns (bool) {
         uint8 enemyColor = isWhite ? BLACK : WHITE;
         uint8 friendlyColor = isWhite ? WHITE : BLACK;
 
@@ -196,7 +197,9 @@ contract Board {
         }
         return true;
     }
-    function getValidMoves() public view returns (bool[64] memory validMoves, bool whiteToMove) {
+    function _getValidMoves() internal view returns (bool[64] memory validMoves, bool whiteToMove) {
+        assert(getAddress(whitesMove) == msg.sender);
+
         // Return list of cells with valid moves.
         uint8 i = 0;
         for(int8 y = 0; y < BOARD_SIZE; y++) {
@@ -224,7 +227,7 @@ contract Board {
         }
     }
     // function playMove(int8 x, int8 y, bool isWhite) public {
-    function playMove(int8 x, int8 y) public {
+    function _playMove(int8 x, int8 y) internal {
         assert(isValidMove(x, y, whitesMove));
 
         assert(getAddress(whitesMove) == msg.sender);
@@ -253,17 +256,12 @@ contract Board {
         whitesMove = !whitesMove;
     }
    
-    function getAddress(bool isWhite) private view returns (address) {
+    function getAddress(bool isWhite) internal view returns (address) {
         uint playerIndex = isWhite ? 1 : 0;
         return playerAddresses[playerIndex];
     }
     
-    function getGameState() external view returns(uint128){
-        return gameState;
-    }
-    function getIsWhiteTurn() external view returns(bool){
-        return whitesMove;
-    }
+
 
 
 }

@@ -3,7 +3,11 @@ pragma experimental ABIEncoderV2;
 
 import "./othelloboard.sol";
 import "./Board.sol";
-contract othellofactory{
+contract othellofactory is Board{
+    
+    event NewGame(address player1, address player2);
+    event YourTurn(address player);
+
     struct Game{
         string black;
         string white;
@@ -13,74 +17,75 @@ contract othellofactory{
         uint128 gameState;
     }
     
-    struct GameDetails{
-        uint gameid;
-        string opponent;
-    }
     
-    struct Player{
-        uint playerid;
-        string name;
-    }
-    
-    Board board;
-    
-    Player[] private allplayers;
-    uint playerCount=0;
-    
-    Game currentGame;
-    uint currentGameId;
-    
-    Game[] public existingGames;
-    mapping (uint => address) playerIdToAddress;
-    // mapping (address => uint) addressToPlayerid;
+    Game[] private existingGames;
+    address[] private waitlistPlayerids;
     mapping (address => string) addressToPlayerName;
     mapping (address => bool) registeredAddresses;
-    mapping (address => GameDetails[]) playerToExistingGames;
+    mapping (address => bool) activelyPlaying;
+    mapping (address => uint) playerToExistingGames;
 
-
-    function viewPlayers() public view returns (Player[] memory){
-        return allplayers;
-    }
     
     function register(string memory name) public{
         require(registeredAddresses[msg.sender]==false, "You are already registered!!");
         registeredAddresses[msg.sender]=true;
-        // addressToPlayerid[msg.sender]=playerCount;
-        playerIdToAddress[playerCount]=msg.sender;
         addressToPlayerName[msg.sender]=name;
-        allplayers.push(Player(playerCount,name));
-        playerCount+=1;
     }
    
-   function createNewGame(uint opponentPlayerId) public{
-       require(msg.sender!=playerIdToAddress[opponentPlayerId]); 
+   function createNewGame() public returns (bool){
+       require(activelyPlaying[msg.sender]!=true);
+       if (waitlistPlayerids.length==0){
+           waitlistPlayerids.push(msg.sender);
+           return false;
+       }
+      Game memory currentGame; 
+      uint currentGameId;
       currentGame.gameState=0;
-      currentGame=Game(addressToPlayerName[msg.sender], addressToPlayerName[playerIdToAddress[opponentPlayerId]],msg.sender,playerIdToAddress[opponentPlayerId],false,currentGame.gameState);
+      address waitlistPlayerid=waitlistPlayerids[0];
+      delete waitlistPlayerids;
+      currentGame=Game(addressToPlayerName[msg.sender], addressToPlayerName[waitlistPlayerid],msg.sender,waitlistPlayerid,false,currentGame.gameState);
       currentGameId=existingGames.push(currentGame)-1;
-      board.initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+      initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+      
+      activelyPlaying[waitlistPlayerid]=true;
+      activelyPlaying[msg.sender]=true;
 
-       // playerToExistingGames[msg.sender]=gameid;
-      playerToExistingGames[playerIdToAddress[opponentPlayerId]].push(GameDetails(currentGameId,currentGame.black));
-      playerToExistingGames[msg.sender].push(GameDetails(currentGameId,currentGame.white));
+      playerToExistingGames[waitlistPlayerid]=currentGameId;
+      playerToExistingGames[msg.sender]=currentGameId;
+      emit NewGame(msg.sender,waitlistPlayerid);
+
+      return true;
     }
    
-    function getMyGames() public view returns(GameDetails[] memory){
-        return playerToExistingGames[msg.sender];
+   
+    function getMyGame() public view returns(Game memory){
+        require(activelyPlaying[msg.sender]==true,"You are not in any game");
+        return existingGames[playerToExistingGames[msg.sender]];
     }
     
-    function loadExistingGame(uint gameid) public returns (Game memory){
-        currentGameId=gameid;
-        currentGame =existingGames[gameid];
-        board.initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+    function setGameState() private returns(Game memory){
+        Game memory currentGame=existingGames[playerToExistingGames[msg.sender]];
+        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
         return currentGame;
-        
     }
     
-    function saveGame() public{
-        currentGame.gameState=board.getGameState();
-        currentGame.isWhiteTurn=board.getIsWhiteTurn();
-        existingGames[currentGameId]=currentGame;
+    function getValidMoves() public returns (bool[64] memory validMoves, bool whiteToMove){
+        setGameState();
+        return _getValidMoves();
+    }
+    
+    function playMove(int8 x, int8 y) public {
+        Game memory currentGame = setGameState();
+        _playMove(x,y);
+        saveGameState(currentGame);
+        emit YourTurn(getAddress(whitesMove));
+    }
+    
+    
+    function saveGameState(Game memory currentGame) private{
+        currentGame.gameState=Board.gameState;
+        currentGame.isWhiteTurn=Board.whitesMove;
+        existingGames[playerToExistingGames[msg.sender]]=currentGame;
     }
 
 }
