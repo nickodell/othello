@@ -4,7 +4,7 @@ const initialState = {
     web3: null,
     accounts: [],
     account: null,
-    networkId: []
+    networkId: null
 };
 
 export default function (state=initialState, action) {

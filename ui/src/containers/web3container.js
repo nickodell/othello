@@ -15,6 +15,12 @@ class Web3Container extends Component {
     }
 }
 
+Web3Container.propTypes = {
+    getWeb3Instance: PropTypes.func.isRequired,
+    account: PropTypes.string,
+    networkId: PropTypes.number
+};
+
 const mapStateToProps = (state) => ({
     account: state.web3.account,
     networkId: state.web3.networkId
