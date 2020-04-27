@@ -1,4 +1,4 @@
-import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES, GET_WEB3_INSTANCE } from './types';
+import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, GET_WEB3_INSTANCE } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 export const getWeb3Instance = () => async (dispatch) => {
@@ -18,12 +18,13 @@ export const getGamestate = () => dispatch => {
     // const newGamestate = await fetch('');
     // const parsedGamestate = await newGamestate.json();
     const parsedGamestate = {
-        gamestate: [0, 0, 0, 0, 0, 2, 3, 0, 0, 3, 2, 0, 0, 0, 0, 0]
+        gamestate: [0, 0, 0, 0, 0, 2, 3, 0, 0, 3, 2, 0, 0, 0, 0, 0],
+        myTurn: true
     };
 
     dispatch({
         type: UPDATE_GAMEBOARD,
-        payload: parsedGamestate.gamestate
+        payload: parsedGamestate
     });
 };
 
@@ -37,5 +38,12 @@ export const getLegalMoves = () => dispatch => {
     dispatch({
         type: GET_LEGAL_MOVES,
         payload: parsedLegalMoves.legalMoves
+    });
+};
+
+export const playMove = (index) => dispatch => {
+    console.log('PLAYMOVE ' + index);
+    dispatch({
+        type: PLAY_MOVE,
     });
 };
