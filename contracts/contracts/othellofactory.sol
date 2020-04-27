@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 import "./othelloboard.sol";
 import "./Board.sol";
-contract othellofactory is Board{
+contract othellofactory{
     struct Game{
         string black;
         string white;
@@ -23,7 +23,7 @@ contract othellofactory is Board{
         string name;
     }
     
-    // Board board;
+    Board board;
     
     Player[] private allplayers;
     uint playerCount=0;
@@ -45,12 +45,12 @@ contract othellofactory is Board{
     
     function register(string memory name) public{
         require(registeredAddresses[msg.sender]==false, "You are already registered!!");
-        allplayers.push(Player(playerCount,name));
-        playerCount+=1;
         registeredAddresses[msg.sender]=true;
         // addressToPlayerid[msg.sender]=playerCount;
         playerIdToAddress[playerCount]=msg.sender;
         addressToPlayerName[msg.sender]=name;
+        allplayers.push(Player(playerCount,name));
+        playerCount+=1;
     }
    
    function createNewGame(uint opponentPlayerId) public{
@@ -58,7 +58,7 @@ contract othellofactory is Board{
       currentGame.gameState=0;
       currentGame=Game(addressToPlayerName[msg.sender], addressToPlayerName[playerIdToAddress[opponentPlayerId]],msg.sender,playerIdToAddress[opponentPlayerId],false,currentGame.gameState);
       currentGameId=existingGames.push(currentGame)-1;
-      initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+      board.initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
 
        // playerToExistingGames[msg.sender]=gameid;
       playerToExistingGames[playerIdToAddress[opponentPlayerId]].push(GameDetails(currentGameId,currentGame.black));
@@ -72,14 +72,14 @@ contract othellofactory is Board{
     function loadExistingGame(uint gameid) public returns (Game memory){
         currentGameId=gameid;
         currentGame =existingGames[gameid];
-        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+        board.initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
         return currentGame;
         
     }
     
     function saveGame() public{
-        currentGame.gameState=Board.gameState;
-        currentGame.isWhiteTurn=Board.whitesMove;
+        currentGame.gameState=board.getGameState();
+        currentGame.isWhiteTurn=board.getIsWhiteTurn();
         existingGames[currentGameId]=currentGame;
     }
 

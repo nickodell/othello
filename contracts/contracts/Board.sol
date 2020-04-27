@@ -12,15 +12,15 @@ contract Board {
     // Also equal to BOARD_SIZE * BOARD_SIZE * BITS_PER_CELL
     uint8 constant internal BITFIELD_SIZE = 128;
     address[2] playerAddresses;
-    uint128 public gameState;
-    bool whitesMove;
+    uint128 gameState;
+    bool  whitesMove;
     bool debugMode;
 
     // This allows us to call methods from Bits.sol on a uint128
     using Bits128 for uint128;
 
  
-    function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) internal {
+    function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) external {
         debugMode = _isNewGame;
         playerAddresses[0]=blackAddress;
         playerAddresses[1]=whiteAddress;
@@ -257,5 +257,13 @@ contract Board {
         uint playerIndex = isWhite ? 1 : 0;
         return playerAddresses[playerIndex];
     }
+    
+    function getGameState() external view returns(uint128){
+        return gameState;
+    }
+    function getIsWhiteTurn() external view returns(bool){
+        return whitesMove;
+    }
+
 
 }
