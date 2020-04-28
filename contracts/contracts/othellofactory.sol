@@ -25,7 +25,7 @@ contract othellofactory is Board{
     mapping (address => bool) activelyPlaying;
     mapping (address => uint) playerToExistingGames;
 
-    
+    uint8[64] boardState;
     function register(string memory name) public{
         require(registeredAddresses[msg.sender]==false, "You are already registered!!");
         registeredAddresses[msg.sender]=true;
@@ -52,6 +52,7 @@ contract othellofactory is Board{
 
       playerToExistingGames[waitlistPlayerid]=currentGameId;
       playerToExistingGames[msg.sender]=currentGameId;
+      saveGameState(currentGame);
       emit NewGame(msg.sender,waitlistPlayerid);
 
       return true;
@@ -65,7 +66,7 @@ contract othellofactory is Board{
     
     function setGameState() private returns(Game memory){
         Game memory currentGame=existingGames[playerToExistingGames[msg.sender]];
-        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,false);
         return currentGame;
     }
     
@@ -87,5 +88,18 @@ contract othellofactory is Board{
         currentGame.isWhiteTurn=Board.whitesMove;
         existingGames[playerToExistingGames[msg.sender]]=currentGame;
     }
-
+    
+    function getGameState() public returns(uint128){
+                setGameState();
+                return Board.gameState;
+    }
+    
+    function getTilesArray(uint128 state) public pure returns (uint8[64] memory board) {
+        // Return array of board values, 1 per space
+        uint8 flatCoord = 0;
+        for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
+            board[flatCoord] = uint8(state.bits(bitCoord, BITS_PER_CELL));
+            flatCoord++;
+        }
+    }
 }
