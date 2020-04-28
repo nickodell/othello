@@ -3,3 +3,4 @@ export const UPDATE_GAMEBOARD = 'UPDATE_GAMEBOARD';
 export const GET_LEGAL_MOVES = 'GET_LEGAL_MOVES';
 export const PLAY_MOVE = 'PLAY_MOVE';
 export const GET_WEB3_INSTANCE = 'GET_WEB3_INSTANCE';
+export const GET_CONTRACTS = 'GET_CONTRACTS';
