@@ -58,7 +58,7 @@ contract othellofactory is Board{
       return true;
     }
    
-   
+   // Returns the updated Game struct of the player
     function getMyGame() public view returns(Game memory){
         require(activelyPlaying[msg.sender]==true,"You are not in any game");
         return existingGames[playerToExistingGames[msg.sender]];
@@ -70,11 +70,13 @@ contract othellofactory is Board{
         return currentGame;
     }
     
+    // return the validMoves as a boolean 64 bit array with 1 for potential squares
     function getValidMoves() public returns (bool[64] memory validMoves, bool whiteToMove){
         setGameState();
         return _getValidMoves();
     }
     
+    // Takes the row index and column index of the 8*8 game board
     function playMove(int8 x, int8 y) public {
         Game memory currentGame = setGameState();
         _playMove(x,y);
@@ -89,16 +91,12 @@ contract othellofactory is Board{
         existingGames[playerToExistingGames[msg.sender]]=currentGame;
     }
     
-    function getGameState() public returns(uint128){
-                setGameState();
-                return Board.gameState;
-    }
-    
-    function getTilesArray(uint128 state) public pure returns (uint8[64] memory board) {
+    // takes gameState from Game and returns the state of the gameBoard as a 64 integer array 
+    function getTilesArray(uint128 gameState) public pure returns (uint8[64] memory board) {
         // Return array of board values, 1 per space
         uint8 flatCoord = 0;
         for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
-            board[flatCoord] = uint8(state.bits(bitCoord, BITS_PER_CELL));
+            board[flatCoord] = uint8(gameState.bits(bitCoord, BITS_PER_CELL));
             flatCoord++;
         }
     }
