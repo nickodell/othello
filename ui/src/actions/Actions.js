@@ -22,9 +22,17 @@ export const toggleModal = (i) => dispatch => {
 
 // TODO: Replace by web3 calls
 export const getGamestate = () => dispatch => {
-    // const newGamestate = await fetch('');
-    // const parsedGamestate = await newGamestate.json();
-    // use getTiles function of the contract
+    /*
+    try {
+        const tiles = await contract.methods.getTiles().call();
+        const myTurn = await contract.methods.myTurn().call();
+
+        dispatch ...
+    } catch (err) {
+        alert('Cannot fetch gamestate, please check console');
+        console.log(err);
+    }
+    */
     const parsedGamestate = {
         gamestate: [0, 0, 0, 0, 0, 1, 3, 0, 0, 3, 1, 0, 0, 0, 0, 0],
         myTurn: true
@@ -37,9 +45,15 @@ export const getGamestate = () => dispatch => {
 };
 
 export const getLegalMoves = () => dispatch => {
-    // const legalMoves = await fetch('');
-    // const parsedLegalMoves = await legalMoves.json();
-    // use getValidMoves form contract
+    /*
+    try {
+        const legalMoves = await contract.methods.getLegalMoves().call();
+        dispatch ...
+    } catch (err) {
+        alert('Cannot fetch legal moves, please check console');
+        console.log(err);
+    }
+    */
     const parsedLegalMoves = {
         legalMoves: [false, true, false, false, true, false, false, false, false, false, false, true, false, false, true, false]
     };
@@ -51,6 +65,21 @@ export const getLegalMoves = () => dispatch => {
 };
 
 export const playMove = (index) => dispatch => {
+    /*
+    try {
+        dispatch with payload false (to avoid player making another move while transaction is processed)
+        add contract and account to args
+        const x = index // 8;
+        const y = index % 8;
+        await contract.method.playMove(x, y).send({ from: account, gas: 50000 });
+        console.log('Successfully played move');
+        dispatch ...
+    } catch (err) {
+        alert('Play move failed, please check console');
+        console.log(err);
+        dispatch with payload true so player can play again
+    }
+    */
     console.log('PLAYMOVE ' + index);
     dispatch({
         type: PLAY_MOVE,
