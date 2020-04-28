@@ -23,6 +23,25 @@
   vertical-align: middle;
 }
 
+.modal {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.modalContent {
+  position: absolute;
+  background-color: white;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  border: 2px solid black;
+}
+
 .gameboard {
   grid-column: 2;
   grid-row: 2;
