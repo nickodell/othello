@@ -91,8 +91,9 @@ contract othellofactory is Board{
         existingGames[playerToExistingGames[msg.sender]]=currentGame;
     }
     
-    // takes gameState from Game and returns the state of the gameBoard as a 64 integer array 
-    function getTilesArray(uint128 gameState) public pure returns (uint8[64] memory board) {
+    // Returns gameBoard as a 64 integer array 
+    function getTilesArray() public view returns (uint8[64] memory board) {
+        uint128 gameState=getMyGame().gameState;
         // Return array of board values, 1 per space
         uint8 flatCoord = 0;
         for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
