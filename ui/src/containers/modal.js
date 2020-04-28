@@ -7,7 +7,7 @@ import { toggleModal } from '../actions/Actions';
 class Modal extends Component {
     render() {
         const modalText = [
-            'Illegal move, please select from the provided legal moves,',
+            'Illegal move, please select from the provided legal moves.',
             'White',
             '',
             'Black'
