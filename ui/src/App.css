@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  background-color: #61dafb;
+  background-image: linear-gradient(#61dafb, #6b61fb);
   position: absolute;
   height: 100%;
   width: 100%;
@@ -45,16 +45,16 @@
 .gameboard {
   grid-column: 2;
   grid-row: 2;
-  background-color: black;
+  background-image: linear-gradient(to bottom right, green, rgb(165, 161, 161, 0.75));
   display: grid;
   grid-template-columns: repeat(4, 5rem);
   grid-auto-rows: 5rem;
-  gap: 3px;
-  padding: 3px;
+  margin: 3px;
+  border: 1px solid black;
 }
 
 .tile {
-  background-color: green;
+  border: 1px solid black;
   line-height: 5em;
 }
 
