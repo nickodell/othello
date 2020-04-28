@@ -15,10 +15,10 @@ class GameBoard extends Component {
     render() {
         console.log(this.props);
         const board = this.props.gamestate.map((val, i) => {
-            if (this.props.legalMoves.includes(i)) {
+            if (this.props.legalMoves[i]) {
                 return (
                     <div key={i} className="tile" onClick={() => this.props.playMove(i)}>
-                        <Square values={1} />
+                        <Square values={2} />
                     </div>
                 );
             } else {

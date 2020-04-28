@@ -17,8 +17,9 @@ export const getWeb3Instance = () => async (dispatch) => {
 export const getGamestate = () => dispatch => {
     // const newGamestate = await fetch('');
     // const parsedGamestate = await newGamestate.json();
+    // use getTiles function of the contract
     const parsedGamestate = {
-        gamestate: [0, 0, 0, 0, 0, 2, 3, 0, 0, 3, 2, 0, 0, 0, 0, 0],
+        gamestate: [0, 0, 0, 0, 0, 1, 3, 0, 0, 3, 1, 0, 0, 0, 0, 0],
         myTurn: true
     };
 
@@ -31,8 +32,9 @@ export const getGamestate = () => dispatch => {
 export const getLegalMoves = () => dispatch => {
     // const legalMoves = await fetch('');
     // const parsedLegalMoves = await legalMoves.json();
+    // use getValidMoves form contract
     const parsedLegalMoves = {
-        legalMoves: [1, 4, 11, 14]
+        legalMoves: [false, true, false, false, true, false, false, false, false, false, false, true, false, false, true, false]
     };
 
     dispatch({
