@@ -8,7 +8,7 @@ class Web3Container extends Component {
     async componentDidMount() {
         await this.props.getWeb3Instance();
         console.log('Account: ' + this.props.account);
-        console.log('Network ID: ' + this.props.networkId) 
+        console.log('Network ID: ' + this.props.networkId);
     }
     render() {
         return null;
