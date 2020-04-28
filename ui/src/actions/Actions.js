@@ -1,4 +1,4 @@
-import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, GET_WEB3_INSTANCE } from './types';
+import { TOGGLE_MODAL, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, GET_WEB3_INSTANCE } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 export const getWeb3Instance = () => async (dispatch) => {
@@ -10,6 +10,13 @@ export const getWeb3Instance = () => async (dispatch) => {
     dispatch({
         type: GET_WEB3_INSTANCE,
         payload: {web3: web3, accounts: accounts, account: account, networkId: networkId}
+    });
+};
+
+export const toggleModal = (i) => dispatch => {
+    dispatch({
+        type: TOGGLE_MODAL,
+        payload: i
     });
 };
 
