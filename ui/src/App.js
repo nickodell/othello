@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 
 import GameBoard from './containers/gameboard';
 import Web3Container from './containers/web3container';
+import Modal from './containers/modal';
 
 import store from './store';
 
@@ -19,6 +20,7 @@ function App() {
         </div>
         <Web3Container />
         <GameBoard />
+        <Modal />
       </div>
     </Provider>
   );
