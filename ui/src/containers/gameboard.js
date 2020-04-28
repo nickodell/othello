@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getGamestate, getLegalMoves, playMove } from '../actions/Actions';
+import { getGamestate, getLegalMoves, playMove, toggleModal } from '../actions/Actions';
 
 import Square from '../components/square';
 
@@ -23,7 +23,7 @@ class GameBoard extends Component {
                 );
             } else {
                 return (
-                    <div key={i} className="tile">
+                    <div key={i} className="tile" onClick={() => this.props.toggleModal(val)}>
                         <Square values={val} />
                     </div>
                 );
@@ -51,4 +51,4 @@ const mapStateToProps = (state) => ({
     myTurn: state.game.myTurn
 });
 
-export default connect(mapStateToProps, { getGamestate, getLegalMoves, playMove })(GameBoard);
+export default connect(mapStateToProps, { getGamestate, getLegalMoves, playMove, toggleModal })(GameBoard);
