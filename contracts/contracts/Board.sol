@@ -13,7 +13,7 @@ contract Board {
     // Also equal to BOARD_SIZE * BOARD_SIZE * BITS_PER_CELL
     uint8 constant internal BITFIELD_SIZE = 128;
     address[2] playerAddresses;
-    uint128 public gameState;
+    uint128 internal gameState;
     bool whitesMove;
     bool debugMode;
 
@@ -64,7 +64,7 @@ contract Board {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, BITS_PER_CELL));
     }
-    function getTiles() private view returns (uint8[64] memory board) {
+    function getTiles() internal view returns (uint8[64] memory board) {
         // Return array of board values, 1 per space
         uint8 flatCoord = 0;
         for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
@@ -72,6 +72,8 @@ contract Board {
             flatCoord++;
         }
     }
+    
+    
     function moveIsOnBoard(int8 x, int8 y) private pure returns (bool) {
         if(0 > x || x >= BOARD_SIZE) {
             return false;
@@ -227,7 +229,7 @@ contract Board {
         }
     }
     // function playMove(int8 x, int8 y, bool isWhite) public {
-    function _playMove(int8 x, int8 y) internal {
+    function _playMove(int8 x, int8 y) internal{
         assert(isValidMove(x, y, whitesMove));
 
         assert(getAddress(whitesMove) == msg.sender);
