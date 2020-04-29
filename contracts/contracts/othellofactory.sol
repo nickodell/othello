@@ -1,7 +1,6 @@
 pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
-import "./othelloboard.sol";
 import "./Board.sol";
 contract othellofactory is Board{
     
@@ -25,7 +24,7 @@ contract othellofactory is Board{
     mapping (address => bool) activelyPlaying;
     mapping (address => uint) playerToExistingGames;
 
-    
+    uint8[64] boardState;
     function register(string memory name) public{
         require(registeredAddresses[msg.sender]==false, "You are already registered!!");
         registeredAddresses[msg.sender]=true;
@@ -52,12 +51,13 @@ contract othellofactory is Board{
 
       playerToExistingGames[waitlistPlayerid]=currentGameId;
       playerToExistingGames[msg.sender]=currentGameId;
+      saveGameState(currentGame);
       emit NewGame(msg.sender,waitlistPlayerid);
 
       return true;
     }
    
-   
+   // Returns the updated Game struct of the player
     function getMyGame() public view returns(Game memory){
         require(activelyPlaying[msg.sender]==true,"You are not in any game");
         return existingGames[playerToExistingGames[msg.sender]];
@@ -65,15 +65,17 @@ contract othellofactory is Board{
     
     function setGameState() private returns(Game memory){
         Game memory currentGame=existingGames[playerToExistingGames[msg.sender]];
-        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
+        initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,false);
         return currentGame;
     }
     
+    // return the validMoves as a boolean 64 bit array with 1 for potential squares
     function getValidMoves() public returns (bool[64] memory validMoves, bool whiteToMove){
         setGameState();
         return _getValidMoves();
     }
     
+    // Takes the row index and column index of the 8*8 game board
     function playMove(int8 x, int8 y) public {
         Game memory currentGame = setGameState();
         _playMove(x,y);
@@ -87,5 +89,15 @@ contract othellofactory is Board{
         currentGame.isWhiteTurn=Board.whitesMove;
         existingGames[playerToExistingGames[msg.sender]]=currentGame;
     }
-
+    
+    // Returns gameBoard as a 64 integer array 
+    function getTilesArray() public view returns (uint8[64] memory board) {
+        uint128 gameState=getMyGame().gameState;
+        // Return array of board values, 1 per space
+        uint8 flatCoord = 0;
+        for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
+            board[flatCoord] = uint8(gameState.bits(bitCoord, BITS_PER_CELL));
+            flatCoord++;
+        }
+    }
 }
