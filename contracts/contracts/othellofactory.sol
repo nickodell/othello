@@ -7,6 +7,7 @@ contract othellofactory is Board{
     
     event NewGame(address player1, address player2);
     event YourTurn(address player);
+    event Forfeit(address nonForfeitedPlayer);
 
     struct Game{
         string black;
@@ -57,6 +58,25 @@ contract othellofactory is Board{
 
       return true;
     }
+    
+    // Returns true if the player can forfeit else false
+    function forfeit() public returns(bool isForfeitSuccess){
+        // player can only forfeit if he is in any game
+        if(activelyPlaying[msg.sender]==false){
+            return false;
+        }
+        else{
+           address opponent= getMyOpponent();
+           activelyPlaying[opponent]=false;
+           activelyPlaying[msg.sender]=false;
+           delete playerToGames[msg.sender];
+           delete playerToGames[opponent];
+           emit Forfeit(opponent);  // emits forfeit event to let the other player know and display him as winner
+           return true; // if true the player who forfeited will be displayed as looser
+        }
+        
+    }
+    
    
    // Returns the updated Game struct of the player if he has any game
     function getMyGame() public view returns(Game memory){
@@ -108,5 +128,24 @@ contract othellofactory is Board{
             return "BLACK";
         }
         return "WHITE";
+    }
+    
+    // returns the address of opponent, helper for forfeit function
+    function getMyOpponent() public view returns(address opponent){
+        if (msg.sender==getMyGame().blackaddress){
+            return getMyGame().whiteaddress;
+        }
+        return getMyGame().blackaddress;
+    }
+    
+    // Return the currentState of player's game
+    function getCurrentState() public view returns (string memory state){
+        if (activelyPlaying[msg.sender]==true){
+            return "IN_GAME";
+        }
+        else if(waitlistPlayerids[0]==msg.sender){
+            return "MATCHMAKING";
+        }
+        return "IDLE";
     }
 }
