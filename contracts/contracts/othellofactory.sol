@@ -1,7 +1,6 @@
 pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
-import "./othelloboard.sol";
 import "./Board.sol";
 contract othellofactory is Board{
     
@@ -35,6 +34,7 @@ contract othellofactory is Board{
        
        // If there is already another player waiting to play game, New game will be created otherwise player will be added to waitlist
        if (waitlistPlayerids.length==0){   
+
            waitlistPlayerids.push(msg.sender);
            waitlistPlayerName=name;
            return false;
@@ -77,7 +77,7 @@ contract othellofactory is Board{
         
     }
     
-   
+    
    // Returns the updated Game struct of the player if he has any game
     function getMyGame() public view returns(Game memory){
         require(activelyPlaying[msg.sender]==true,"You are not in any game");

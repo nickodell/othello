@@ -26,6 +26,7 @@ contract("Board", async accounts => {
         board = await Board.deployed();
         // gameState = (await board.gameState()).toString();
         // console.log(gameState)
+        await board.initializeBoard(0,0x4C56F72016bcc5C8E812aB20374990D126d22945,0xC83AB1F7Ff09662301cA2bee89FA905A36e11F07,false,true);
         firstTile = (await board.getTile(0, 0)).toString();
         assert.equal(firstTile, EMPTY, "value at 0,0 wrong");
 
