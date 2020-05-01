@@ -17,7 +17,7 @@ class GameBoard extends Component {
         const board = this.props.gamestate.map((val, i) => {
             if (this.props.legalMoves[i]) {
                 return (
-                    <div key={i} className="tile" onClick={() => this.props.playMove(i)}>
+                    <div key={i} className="tile" onClick={() => this.props.playMove(i, this.props.ofContract, this.props.account)}>
                         <Square values={2} />
                     </div>
                 );
