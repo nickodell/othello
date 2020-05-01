@@ -2,18 +2,31 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getGamestate, getLegalMoves, playMove, toggleModal } from '../actions/Actions';
+import { getMyColor, getGamestate, getLegalMoves, playMove, toggleModal } from '../actions/Actions';
 
 import Square from '../components/square';
 
 class GameBoard extends Component {
-    componentDidMount() {
-        this.props.getGamestate();
-        this.props.getLegalMoves();
+    // constructor(props) {
+    //     super(props);
+    //     this.props.getGamestate();
+    //     this.props.getLegalMoves(this.props.ofContract);
+    // }
+    // async componentDidMount() {
+    //     await this.props.getGamestate(this.props.ofContract);
+    //     await this.props.getLegalMoves(this.props.ofContract);
+    // }
+
+    async componentDidUpdate(prevProps) {
+        if ((prevProps.ofContract == null) && (this.props.ofContract)) {
+            console.log('GAMEBOARD');
+            await this.props.getMyColor(this.props.ofContract, this.props.account);
+            await this.props.getGamestate(this.props.ofContract);
+            await this.props.getLegalMoves(this.props.ofContract);
+        }
     }
 
     render() {
-        console.log(this.props);
         const board = this.props.gamestate.map((val, i) => {
             if (this.props.legalMoves[i]) {
                 return (
@@ -42,13 +55,17 @@ GameBoard.propTypes = {
     getLegalMoves: PropTypes.func.isRequired,
     gamestate: PropTypes.array.isRequired,
     legalMoves: PropTypes.array,
-    myTurn: PropTypes.bool
+    myTurn: PropTypes.bool,
+    ofContract: PropTypes.object,
+    account: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
     gamestate: state.game.gamestate,
     legalMoves: state.game.legalMoves,
-    myTurn: state.game.myTurn
+    myTurn: state.game.myTurn,
+    ofContract: state.web3.ofContract,
+    account: state.web3.account
 });
 
-export default connect(mapStateToProps, { getGamestate, getLegalMoves, playMove, toggleModal })(GameBoard);
+export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, toggleModal })(GameBoard);
