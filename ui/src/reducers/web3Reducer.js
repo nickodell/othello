@@ -1,10 +1,10 @@
-import { GET_WEB3_INSTANCE } from '../actions/types';
+import { GET_WEB3_INSTANCE, GET_CONTRACTS } from '../actions/types';
 
 const initialState = {
     web3: null,
     accounts: [],
     account: null,
-    networkId: null
+    ofContract: null
 };
 
 export default function (state=initialState, action) {
@@ -14,8 +14,12 @@ export default function (state=initialState, action) {
                 ...state,
                 web3: action.payload.web3,
                 accounts: action.payload.accounts,
-                account: action.payload.account,
-                networkId: action.payload.networkId
+                account: action.payload.account
+            };
+        case GET_CONTRACTS:
+            return {
+                ...state,
+                ofContract: action.payload
             };
         default:
             return state;
