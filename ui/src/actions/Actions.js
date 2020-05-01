@@ -1,4 +1,4 @@
-import { TOGGLE_MODAL, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
+import { TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 export const getWeb3Instance = () => async (dispatch) => {
@@ -33,19 +33,29 @@ export const toggleModal = (i) => dispatch => {
     });
 };
 
-// TODO: Replace by web3 calls
-export const getGamestate = () => dispatch => {
-    /*
+export const getMyColor = (contract, account) => async (dispatch) => {
     try {
-        const tiles = await contract.methods.getTiles().call();
-        const myTurn = await contract.methods.myTurn().call();
+        const myColor = await contract.methods.getMyColor().call({ from: account }); // Method not yet merged
+        console.log('My Color: ' + myColor);
 
-        dispatch ...
+        dispatch({
+            type: GET_COLOR,
+            payload: myColor
+        });
+    } catch (err) {
+        alert('Cannot fetch player color, please check console');
+        console.log(err);
+    }
+};
+
+export const getGamestate = (contract, myColor) => async (dispatch) => {
+    try {
+        const tiles = await contract.methods.getTilesArray().call();
+        // dispatch
     } catch (err) {
         alert('Cannot fetch gamestate, please check console');
         console.log(err);
     }
-    */
     const parsedGamestate = {
         gamestate: [0, 0, 0, 0, 0, 1, 3, 0, 0, 3, 1, 0, 0, 0, 0, 0],
         myTurn: true

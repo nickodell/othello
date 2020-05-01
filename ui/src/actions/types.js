@@ -1,4 +1,5 @@
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
+export const GET_COLOR = 'GET_COLOR';
 export const UPDATE_GAMEBOARD = 'UPDATE_GAMEBOARD';
 export const GET_LEGAL_MOVES = 'GET_LEGAL_MOVES';
 export const PLAY_MOVE = 'PLAY_MOVE';
