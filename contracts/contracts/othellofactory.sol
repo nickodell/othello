@@ -145,13 +145,15 @@ contract othellofactory is Board{
     }
     
     
-    // returns if the game is end, for the ui to know if they have to call endGame function
-    function passMove() public returns(bool isGameEnd){
+   // returns if the game is end, for the ui to know if they have to call endGame function
+    // winner and isDraw are only valid if isGameEnd is true
+    function passMove() public returns(bool isGameEnd, address winner, bool isDraw){
         if(getMyGame().isMovePassed==true){
-            return true;
+            (address winner,bool isDraw)=endGame();
+            return(true, winner, isDraw);
         }
         existingGames[playerToGames[msg.sender]].isMovePassed=true;
-        return false;
+        return (false,msg.sender,false);
     }
     
     // If isDraw is true no player is winner but this function returns black as winner please ignore the winner when isDraw is true
