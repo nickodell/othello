@@ -1,13 +1,19 @@
-import { UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE } from '../actions/types';
+import { GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE } from '../actions/types';
 
 const initialState = {
     gamestate: [],
     legalMoves: [],
-    myTurn: false
+    myTurn: false,
+    myColor: null
 };
 
 export default function (state=initialState, action) {
     switch (action.type) {
+        case GET_COLOR:
+            return {
+                ...state,
+                myColor: action.payload
+            };
         case UPDATE_GAMEBOARD:
             return {
                 ...state,
@@ -22,7 +28,7 @@ export default function (state=initialState, action) {
         case PLAY_MOVE:
             return {
                 ...state,
-                myTurn: false
+                myTurn: action.payload
             };
         default:
             return state;
