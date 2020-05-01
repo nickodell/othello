@@ -7,11 +7,10 @@ export const getWeb3Instance = () => async (dispatch) => {
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
-    const networkId = await web3.eth.net.getId();
 
     dispatch({
         type: GET_WEB3_INSTANCE,
-        payload: {web3: web3, accounts: accounts, account: account, networkId: networkId}
+        payload: {web3: web3, accounts: accounts, account: account}
     });
 };
 
