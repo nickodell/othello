@@ -42,6 +42,21 @@
   border: 2px solid black;
 }
 
+.lander {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.nameInput {
+  font-size: 2rem;
+  line-height: 2rem;
+  min-width: 10rem;
+  padding: .5em 1.5em;
+  border-radius: 2rem;
+  border: 0px;
+  margin-right: .5rem;
+}
+
 .gameboard {
   grid-column: 2;
   grid-row: 2;
