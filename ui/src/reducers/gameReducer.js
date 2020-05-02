@@ -1,10 +1,11 @@
-import { GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME } from '../actions/types';
+import { GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, YOUR_TURN } from '../actions/types';
 
 const initialState = {
     gamestate: [],
     legalMoves: [],
     myTurn: false,
-    myColor: null
+    myColor: null,
+    gameResult: null
 };
 
 export default function (state=initialState, action) {
@@ -32,7 +33,8 @@ export default function (state=initialState, action) {
             };
         case FORFEIT_GAME:
             return {
-                ...state
+                ...state,
+                gameResult: action.payload
             };
         case YOUR_TURN:
             return {

@@ -28,6 +28,9 @@ class GameBoard extends Component {
             await this.props.getGamestate(this.props.ofContract);
             await this.props.getLegalMoves(this.props.ofContract)
         }
+        if (this.props.gameResult) {
+            this.props.toggleModal(this.props.gameResult);
+        }
     }
 
     render() {
@@ -65,6 +68,7 @@ GameBoard.propTypes = {
     gamestate: PropTypes.array.isRequired,
     legalMoves: PropTypes.array,
     myTurn: PropTypes.bool,
+    gameResult: PropTypes.string,
     ofContract: PropTypes.object,
     account: PropTypes.string
 };
@@ -73,6 +77,7 @@ const mapStateToProps = (state) => ({
     gamestate: state.game.gamestate,
     legalMoves: state.game.legalMoves,
     myTurn: state.game.myTurn,
+    gameResult: state.game.gameResult,
     ofContract: state.web3.ofContract,
     account: state.web3.account
 });

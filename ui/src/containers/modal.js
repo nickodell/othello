@@ -6,12 +6,14 @@ import { toggleModal } from '../actions/Actions';
 
 class Modal extends Component {
     render() {
-        const modalText = [
-            'Illegal move, please select from the provided legal moves.',
-            'White',
-            '',
-            'Black'
-        ];
+        const modalText = {
+            0: 'Illegal move, please select from the provided legal moves.',
+            1: 'White',
+            2: '',
+            3: 'Black',
+            'WINNER': 'Winner winner, chicken dinner!',
+            'LOSER': 'You\'ve lost :('
+        };
         let modalDiv = null;
         if (this.props.showModal) {
             modalDiv = (
