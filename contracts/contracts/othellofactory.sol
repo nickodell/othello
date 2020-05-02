@@ -194,7 +194,7 @@ contract othellofactory is Board{
     }
     
     // Return the currentState of player's game
-    function getCurrentState() public view returns (string memory state){
+    function getCurrentState() public returns (string memory state){
         if (activelyPlaying[msg.sender]==true){
             return "IN_GAME";
         }
