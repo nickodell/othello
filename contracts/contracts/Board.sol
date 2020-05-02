@@ -19,17 +19,19 @@ contract Board {
 
     // This allows us to call methods from Bits.sol on a uint128
     using Bits128 for uint128;
+    constructor(bool _debugMode) public {
+        debugMode = _debugMode;
+    }
 
  
     function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) internal {
-        debugMode = _isNewGame;
-        playerAddresses[0]=blackAddress;
-        playerAddresses[1]=whiteAddress;
+        playerAddresses[0] = blackAddress;
+        playerAddresses[1] = whiteAddress;
         // Clear board
         gameState = state;
         whitesMove = _isWhiteTurn;
         // Set middle tiles
-        if(_isNewGame==true){
+        if(_isNewGame){
             setTile(3, 3, WHITE);
             setTile(4, 3, BLACK);
             setTile(3, 4, BLACK);
@@ -255,5 +257,24 @@ contract Board {
         // It's now the other player's move
         whitesMove = !whitesMove;
     }
-   
+
+    // Functions with this modifier can only be called in debug mode.
+    modifier debugOnly() {
+        require(debugMode, "Contract is not in debug mode, operation not allowed");
+        _;
+    }
+
+    // These functions are required by the testing code
+    // Please don't mark them as internal.
+    function disableDebug() public debugOnly {
+        debugMode = false;
+    }
+
+    function call_initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) public debugOnly {
+        initializeBoard(state, blackAddress, whiteAddress, _isWhiteTurn, _isNewGame);
+    }
+
+    function call_getTile(int8 x, int8 y) public view debugOnly returns (uint8 value) {
+        return getTile(x, y);
+    }
 }

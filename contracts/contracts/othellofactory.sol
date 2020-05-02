@@ -29,6 +29,9 @@ contract othellofactory is Board{
 
     uint8[64] boardState;
     
+    // Disable debug mode in parent contract
+    constructor() public Board(false) {}
+    
    // Implements matchmaking api to create a game
    // Returns true if game is created, false if the player is added to waitlist
    function createNewGame(string memory name) public returns (bool){
@@ -163,16 +166,16 @@ contract othellofactory is Board{
     // If isDraw is false then returns the winner
     // Also emits an event called endGame to notify both the users the game is end
     function endGame() public returns(address _winner, bool _isDraw){
-        uint8[64] memory tiles =getTilesArray();
+        uint8[64] memory tiles = getTilesArray();
         uint8 black;
         uint8 white;
         address blackaddress=getMyGame().blackaddress;
         address whiteaddress=getMyGame().whiteaddress;
         for(uint8 tile = 0; tile < 64; tile += 1) {
-            if(tiles[tile]==1){
+            if(tiles[tile]==BLACK){
                 black+=1;
             } 
-            else if(tiles[tile]==3){
+            else if(tiles[tile]==WHITE){
                 white+=1;
             }
         }
