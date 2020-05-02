@@ -1,4 +1,4 @@
-import { TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
+import { TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 import othellofactory from '../contracts/othellofactory.json';
@@ -106,5 +106,21 @@ export const playMove = (index, contract, account) => async (dispatch) => {
             type: PLAY_MOVE,
             payload: true
         });
+    }
+};
+
+export const forfeitGame = (contract, account) => async (dispatch) => {
+    try {
+        const isForfeitSuccess = await contract.methods.forfeit().send({ from: account, gas: 50000 });
+        if (isForfeitSuccess) {
+            dispatch({
+                type: FORFEIT_GAME
+            });
+        } else {
+            throw new Error('Forfeit function returned false');
+        }
+    } catch (err) {
+        alert('Forfeit failed, please see console');
+        console.log(err);
     }
 };
