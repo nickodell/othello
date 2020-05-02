@@ -7,7 +7,7 @@ contract othellofactory is Board{
     event NewGame(address black, address white);
     event YourTurn(address player);
     event Forfeit(address nonForfeitedPlayer);
-    event EndGame(address winner, address looser);
+    event EndGame(address winner, address loser);
 
     struct Game{
         string black;
