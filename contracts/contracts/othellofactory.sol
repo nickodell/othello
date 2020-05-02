@@ -198,7 +198,7 @@ contract othellofactory is Board{
         if (activelyPlaying[msg.sender]==true){
             return "IN_GAME";
         }
-        else if(waitlistPlayerids[0]==msg.sender){
+        else if((waitlistPlayerids.length!=0) && (waitlistPlayerids[0]==msg.sender)){
             return "MATCHMAKING";
         }
         return "IDLE";
