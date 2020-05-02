@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getMyColor, getGamestate, getLegalMoves, playMove, toggleModal } from '../actions/Actions';
+import { getMyColor, getGamestate, getLegalMoves, playMove, forfeitGame, toggleModal } from '../actions/Actions';
 
 import Square from '../components/square';
 
@@ -43,9 +43,14 @@ class GameBoard extends Component {
             }
         });
         return (
-            <div className="gameboard">
-                {board}
-            </div>
+            <Fragment>
+                <div className="gameboard">
+                    {board}
+                </div>
+                <div className="rightBar">
+                    <button className="btn" onClick={() => this.props.forfeitGame(this.props.ofContract, this.props.account)}>Forfeit</button>
+                </div>
+            </Fragment>
         )
     }
 }
@@ -68,4 +73,4 @@ const mapStateToProps = (state) => ({
     account: state.web3.account
 });
 
-export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, toggleModal })(GameBoard);
+export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, forfeitGame, toggleModal })(GameBoard);

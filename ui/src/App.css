@@ -53,6 +53,21 @@
   border: 1px solid black;
 }
 
+.rightBar {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.btn {
+  color: white;
+  background-image: linear-gradient(to right, rgb(255, 102, 0), rgb(255, 204, 0));
+  font-size: 2rem;
+  line-height: 2rem;
+  padding: .5em 1.5em;
+  border-radius: 2rem;
+  border: 0px;
+}
+
 .tile {
   border: 1px solid black;
   line-height: 5em;
