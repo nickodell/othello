@@ -7,7 +7,7 @@ contract othellofactory is Board{
     event NewGame(address black, address white);
     event YourTurn(address player);
     event Forfeit(address nonForfeitedPlayer);
-    event EndGame(address black, address white);
+    event EndGame(address winner, address loser);
 
     struct Game{
         string black;
@@ -98,17 +98,19 @@ contract othellofactory is Board{
     
     // return the validMoves as a boolean 64 bit array with 1 for potential squares
     function getValidMoves() public returns (bool[64] memory validMoves, bool whiteToMove){
+        require(msg.sender==getCurrentTurnAddress(),"It is not your turn!");
         setGameState();
         return _getValidMoves();
     }
     
     // Takes the row index and column index of the 8*8 game board
     function playMove(int8 x, int8 y) public {
+        require(msg.sender==getCurrentTurnAddress(), "It is not your turn!");
         Game memory currentGame = setGameState();
         existingGames[playerToGames[msg.sender]].isMovePassed=false;
         _playMove(x,y);
         saveGameState(currentGame);
-        emit YourTurn(getAddress(whitesMove));
+        emit YourTurn(getMyOpponent());
     }
     
     // We should update the existing games with the new gameState after every move
@@ -145,11 +147,12 @@ contract othellofactory is Board{
     }
     
     
-   // returns if the game is end, for the ui to know if they have to call endGame function
+    // returns if the game is end, for the ui to know if they have to call endGame function
     // winner and isDraw are only valid if isGameEnd is true
     function passMove() public returns(bool isGameEnd, address winner, bool isDraw){
+        require(msg.sender==getCurrentTurnAddress(),"It is not your turn!");
         if(getMyGame().isMovePassed==true){
-            (address winner,bool isDraw)=endGame();
+            (winner,isDraw)=endGame();
             return(true, winner, isDraw);
         }
         existingGames[playerToGames[msg.sender]].isMovePassed=true;
@@ -159,7 +162,7 @@ contract othellofactory is Board{
     // If isDraw is true no player is winner but this function returns black as winner please ignore the winner when isDraw is true
     // If isDraw is false then returns the winner
     // Also emits an event called endGame to notify both the users the game is end
-    function endGame() public returns(address winner, bool isDraw){
+    function endGame() public returns(address _winner, bool _isDraw){
         uint8[64] memory tiles =getTilesArray();
         uint8 black;
         uint8 white;
@@ -174,19 +177,24 @@ contract othellofactory is Board{
             }
         }
         removeUsersFromGame();
-        emit EndGame(blackaddress,whiteaddress);
         
-        if(white==black){
-            return(blackaddress, true);
-        }
-        winner=black>white?blackaddress:whiteaddress;
+        _isDraw=white==black?true:false;
+        _winner=black>=white?blackaddress:whiteaddress;
+        address _looser=_winner==blackaddress?whiteaddress:blackaddress;
+        emit EndGame(_winner,_looser);
 
-        return(winner, false);
+        return(_winner, _isDraw);
             
     }
     
+    // Returns the address of the player whose turn it is
+    function getCurrentTurnAddress() private view returns(address currentPlayer){
+        address currentTurnAddress=getMyGame().isWhiteTurn? getMyGame().whiteaddress: getMyGame().blackaddress;
+        return currentTurnAddress;
+    }
+    
     // Return the currentState of player's game
-    function getCurrentState() public view returns (string memory state){
+    function getCurrentState() public returns (string memory state){
         if (activelyPlaying[msg.sender]==true){
             return "IN_GAME";
         }

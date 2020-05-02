@@ -200,7 +200,6 @@ contract Board {
         return true;
     }
     function _getValidMoves() internal view returns (bool[64] memory validMoves, bool whiteToMove) {
-        assert(getAddress(whitesMove) == msg.sender);
 
         // Return list of cells with valid moves.
         uint8 i = 0;
@@ -232,7 +231,6 @@ contract Board {
     function _playMove(int8 x, int8 y) internal{
         assert(isValidMove(x, y, whitesMove));
 
-        assert(getAddress(whitesMove) == msg.sender);
 
         // The move is valid, so play it. Place our tile on the board. Then, search in every direction
         // for capturable pieces, and flip them to our color.
@@ -258,12 +256,4 @@ contract Board {
         whitesMove = !whitesMove;
     }
    
-    function getAddress(bool isWhite) internal view returns (address) {
-        uint playerIndex = isWhite ? 1 : 0;
-        return playerAddresses[playerIndex];
-    }
-    
-
-
-
 }
