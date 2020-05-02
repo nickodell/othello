@@ -27,13 +27,13 @@ contract("Board", async accounts => {
         // gameState = (await board.gameState()).toString();
         // console.log(gameState)
         await board.call_initializeBoard(0, "0x4C56F72016bcc5C8E812aB20374990D126d22945", "0xC83AB1F7Ff09662301cA2bee89FA905A36e11F07", false, true);
-        firstTile = (await board.call_getTile(0, 0)).toString();
+        firstTile = (await board.getTile(0, 0)).toString();
         assert.equal(firstTile, EMPTY, "value at 0,0 wrong");
 
-        center1 = (await board.call_getTile(3, 3)).toString();
-        center2 = (await board.call_getTile(4, 3)).toString();
-        center3 = (await board.call_getTile(3, 4)).toString();
-        center4 = (await board.call_getTile(4, 4)).toString();
+        center1 = (await board.getTile(3, 3)).toString();
+        center2 = (await board.getTile(4, 3)).toString();
+        center3 = (await board.getTile(3, 4)).toString();
+        center4 = (await board.getTile(4, 4)).toString();
 
         assert.equal(center1, WHITE, "value at 3,3 wrong");
         assert.equal(center2, BLACK, "value at 4,3 wrong");
@@ -55,24 +55,6 @@ contract("Board", async accounts => {
         // console.log(await board.getTiles());
         gameState = unflatten(convertToNumber(await board.getTiles()), 8);
         assert.deepEqual(gameState, correctBoard, "initial game state is incorrect");
-    });
-    it("tracks player names", async () => {
-        board = await Board.deployed();
-        player1 = await board.getName(false);
-        player2 = await board.getName(true);
-
-        // See 2_deploy_contracts.js for where these values come from
-        assert.equal(player1, "Mr. Black");
-        assert.equal(player2, "Mr. White");
-    });
-    it("tracks player addresses", async () => {
-        board = await Board.deployed();
-        player1 = await board.getAddress(false);
-        player2 = await board.getAddress(true);
-
-        // See 2_deploy_contracts.js for where these values come from
-        assert.equal(player1, "0x4C56F72016bcc5C8E812aB20374990D126d22945");
-        assert.equal(player2, "0xC83AB1F7Ff09662301cA2bee89FA905A36e11F07");
     });
     it("checks valid moves", async () => {
         board = await Board.deployed();
@@ -97,15 +79,15 @@ contract("Board", async accounts => {
                 [_, _, _, _, _, _, _, _],
                 [_, _, _, _, _, _, _, _],
             ];
-        let value = await board.getValidMoves();
+        let value = await board._getValidMoves();
         let [validMoves, whitesMove] = [value['0'], value['1']]
         validMoves = unflatten(validMoves, 8);
         assert.equal(whitesMove, false);
         assert.deepEqual(correctValidMoves, validMoves);
     });
-    it("lets black can make a move", async () => {
+    it("lets black make a move", async () => {
         board = await Board.deployed();
-        await board.playMove(2, 3, false);
+        await board.call_playMove(2, 3);
         correctBoard = [
                 [0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0],
@@ -124,7 +106,7 @@ contract("Board", async accounts => {
         board = await Board.deployed();
 
         // Check white's moves
-        let value = await board.getValidMoves();
+        let value = await board._getValidMoves();
         let [validMoves, whitesMove] = [value['0'], value['1']];
         validMoves = unflatten(validMoves, 8);
         let _ = false;
@@ -140,7 +122,7 @@ contract("Board", async accounts => {
                 [_, _, _, _, _, _, _, _],
             ];
         assert.deepEqual(correctValidMoves, validMoves, "white's legal move list is wrong");
-        await board.playMove(2, 2, true);
+        await board.call_playMove(2, 2);
         correctBoard = [
                 [0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0],

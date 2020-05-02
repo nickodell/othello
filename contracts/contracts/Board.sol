@@ -62,11 +62,11 @@ contract Board {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         gameState = gameState.setBits(bitCoord, BITS_PER_CELL, value);
     }
-    function getTile(int8 x, int8 y) private view returns (uint8 value) {
+    function getTile(int8 x, int8 y) public view returns (uint8 value) {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, BITS_PER_CELL));
     }
-    function getTiles() internal view returns (uint8[64] memory board) {
+    function getTiles() public view returns (uint8[64] memory board) {
         // Return array of board values, 1 per space
         uint8 flatCoord = 0;
         for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
@@ -176,7 +176,7 @@ contract Board {
         // We didn't find any pieces to capture, in any direction
         return false;
     }
-    function isValidMove(int8 x, int8 y, bool isWhite) internal view returns (bool) {
+    function isValidMove(int8 x, int8 y, bool isWhite) public view returns (bool) {
         uint8 enemyColor = isWhite ? BLACK : WHITE;
         uint8 friendlyColor = isWhite ? WHITE : BLACK;
 
@@ -201,7 +201,7 @@ contract Board {
         }
         return true;
     }
-    function _getValidMoves() internal view returns (bool[64] memory validMoves, bool whiteToMove) {
+    function _getValidMoves() public view returns (bool[64] memory validMoves, bool whiteToMove) {
 
         // Return list of cells with valid moves.
         uint8 i = 0;
@@ -230,7 +230,7 @@ contract Board {
         }
     }
     // function playMove(int8 x, int8 y, bool isWhite) public {
-    function _playMove(int8 x, int8 y) internal{
+    function _playMove(int8 x, int8 y) internal {
         assert(isValidMove(x, y, whitesMove));
 
 
@@ -270,11 +270,11 @@ contract Board {
         debugMode = false;
     }
 
-    function call_initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) public debugOnly {
+    function call_initializeBoard(uint128 state, address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) public debugOnly {
         initializeBoard(state, blackAddress, whiteAddress, _isWhiteTurn, _isNewGame);
     }
 
-    function call_getTile(int8 x, int8 y) public view debugOnly returns (uint8 value) {
-        return getTile(x, y);
+    function call_playMove(int8 x, int8 y) public debugOnly {
+        _playMove(x, y);
     }
 }
