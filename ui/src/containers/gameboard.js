@@ -18,7 +18,7 @@ class GameBoard extends Component {
     // }
 
     async componentDidUpdate(prevProps) {
-        if ((prevProps.ofContract == null) && (this.props.ofContract)) {
+        if ((prevProps.ofContract === null) && (this.props.ofContract)) {
             console.log('GAMEBOARD');
             await this.props.getMyColor(this.props.ofContract, this.props.account);
             await this.props.getGamestate(this.props.ofContract);
