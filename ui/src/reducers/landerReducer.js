@@ -1,4 +1,4 @@
-import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME } from '../actions/types';
+import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME, NEW_GAME } from '../actions/types';
 
 const initialState = {
     currentState: '',
@@ -23,6 +23,11 @@ export default function(state=initialState, action) {
                 ...state,
                 name: action.payload.name,
                 gameCreated: action.payload.gameCreated
+            };
+        case NEW_GAME:
+            return {
+                ...state,
+                gameCreated: true
             };
         default:
             return state;

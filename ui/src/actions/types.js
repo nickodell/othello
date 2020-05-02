@@ -10,3 +10,4 @@ export const FORFEIT_GAME = 'FORFEIT_GAME';
 export const GET_WEB3_INSTANCE = 'GET_WEB3_INSTANCE';
 export const GET_CONTRACTS = 'GET_CONTRACTS';
 export const YOUR_TURN = 'YOUR_TURN';
+export const NEW_GAME = 'NEW_GAME';
