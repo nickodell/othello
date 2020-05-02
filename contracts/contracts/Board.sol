@@ -19,17 +19,19 @@ contract Board {
 
     // This allows us to call methods from Bits.sol on a uint128
     using Bits128 for uint128;
+    constructor(bool _debugMode) public {
+        debugMode = _debugMode;
+    }
 
  
     function initializeBoard(uint128 state,address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) internal {
-        debugMode = _isNewGame;
-        playerAddresses[0]=blackAddress;
-        playerAddresses[1]=whiteAddress;
+        playerAddresses[0] = blackAddress;
+        playerAddresses[1] = whiteAddress;
         // Clear board
         gameState = state;
         whitesMove = _isWhiteTurn;
         // Set middle tiles
-        if(_isNewGame==true){
+        if(_isNewGame){
             setTile(3, 3, WHITE);
             setTile(4, 3, BLACK);
             setTile(3, 4, BLACK);
@@ -60,11 +62,11 @@ contract Board {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         gameState = gameState.setBits(bitCoord, BITS_PER_CELL, value);
     }
-    function getTile(int8 x, int8 y) private view returns (uint8 value) {
+    function getTile(int8 x, int8 y) public view returns (uint8 value) {
         uint8 bitCoord = getBitfieldCoordinate(x, y);
         return uint8(gameState.bits(bitCoord, BITS_PER_CELL));
     }
-    function getTiles() internal view returns (uint8[64] memory board) {
+    function getTiles() public view returns (uint8[64] memory board) {
         // Return array of board values, 1 per space
         uint8 flatCoord = 0;
         for(uint8 bitCoord = 0; bitCoord < BITFIELD_SIZE; bitCoord += BITS_PER_CELL) {
@@ -174,7 +176,7 @@ contract Board {
         // We didn't find any pieces to capture, in any direction
         return false;
     }
-    function isValidMove(int8 x, int8 y, bool isWhite) internal view returns (bool) {
+    function isValidMove(int8 x, int8 y, bool isWhite) public view returns (bool) {
         uint8 enemyColor = isWhite ? BLACK : WHITE;
         uint8 friendlyColor = isWhite ? WHITE : BLACK;
 
@@ -199,7 +201,7 @@ contract Board {
         }
         return true;
     }
-    function _getValidMoves() internal view returns (bool[64] memory validMoves, bool whiteToMove) {
+    function _getValidMoves() public view returns (bool[64] memory validMoves, bool whiteToMove) {
 
         // Return list of cells with valid moves.
         uint8 i = 0;
@@ -228,7 +230,7 @@ contract Board {
         }
     }
     // function playMove(int8 x, int8 y, bool isWhite) public {
-    function _playMove(int8 x, int8 y) internal{
+    function _playMove(int8 x, int8 y) internal {
         assert(isValidMove(x, y, whitesMove));
 
 
@@ -255,5 +257,24 @@ contract Board {
         // It's now the other player's move
         whitesMove = !whitesMove;
     }
-   
+
+    // Functions with this modifier can only be called in debug mode.
+    modifier debugOnly() {
+        require(debugMode, "Contract is not in debug mode, operation not allowed");
+        _;
+    }
+
+    // These functions are required by the testing code
+    // Please don't mark them as internal.
+    function disableDebug() public debugOnly {
+        debugMode = false;
+    }
+
+    function call_initializeBoard(uint128 state, address blackAddress, address whiteAddress, bool _isWhiteTurn, bool _isNewGame) public debugOnly {
+        initializeBoard(state, blackAddress, whiteAddress, _isWhiteTurn, _isNewGame);
+    }
+
+    function call_playMove(int8 x, int8 y) public debugOnly {
+        _playMove(x, y);
+    }
 }
