@@ -1,10 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import GameBoard from './containers/gameboard';
 import Web3Container from './containers/web3container';
 import Modal from './containers/modal';
-import Lander from './containers/lander';
+import AppContainer from './containers/appContainer';
 
 import store from './store';
 
@@ -20,8 +19,7 @@ function App() {
           <h1 className="title">Othello</h1>
         </div>
         <Web3Container />
-        <Lander />
-        {/* <GameBoard /> */}
+        <AppContainer />
         <Modal />
       </div>
     </Provider>
