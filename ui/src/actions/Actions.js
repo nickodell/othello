@@ -146,7 +146,7 @@ export const playMove = (index, contract, account) => async (dispatch) => {
 
 export const yourTurn = (contract, account) => async (dispatch) => {
     try {
-        await contract.YourTurn((e, r) => {
+        await contract.events.YourTurn((e, r) => {
             if (e) {
                 throw new Error(e);
             }
@@ -181,7 +181,7 @@ export const forfeitGame = (contract, account) => async (dispatch) => {
 
 export const forfeitEvent = (contract, account) => async (dispatch) => {
     try {
-        await contract.Forfeit((e, r) => {
+        await contract.events.Forfeit((e, r) => {
             if (e) {
                 throw new Error(e);
             }
@@ -200,7 +200,7 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
 
 export const newGameEvent = (contract) => async (dispatch) => {
     try {
-        await contract.NewGame((e, r) => {
+        await contract.events.NewGame((e, r) => {
             if (e) {
                 throw new Error(e);
             }
