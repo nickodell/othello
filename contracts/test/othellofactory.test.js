@@ -48,6 +48,6 @@ contract("Factory", async accounts => {
         await factory.createNewGame("john", {from: john});
         await factory.playMove(2,3,{from:john});
         const result = await factory.getMyGame({from:eve});
-        assert.equal(result[4],eve);
+        assert.equal(result[4],true);
     })
 })
