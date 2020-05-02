@@ -148,7 +148,7 @@ export const yourTurn = (contract, account) => async (dispatch) => {
     try {
         await contract.YourTurn((e, r) => {
             if (e) {
-                return error(e);
+                throw new Error(e);
             }
             if (r.args.player === account) {
                 dispatch({
@@ -183,7 +183,7 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
     try {
         await contract.Forfeit((e, r) => {
             if (e) {
-                return error(e);
+                throw new Error(e);
             }
             if (r.args.nonForfeitedPlayer === account) {
                 dispatch({
@@ -202,7 +202,7 @@ export const newGameEvent = (contract) => async (dispatch) => {
     try {
         await contract.NewGame((e, r) => {
             if (e) {
-                return error(e);
+                throw new Error(e);
             }
             dispatch({
                 type: NEW_GAME
