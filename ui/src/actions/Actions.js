@@ -1,4 +1,4 @@
-import { TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
+import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME, TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 import othellofactory from '../contracts/othellofactory.json';
@@ -25,6 +25,41 @@ export const getContracts = (web3) => async (dispatch) => {
         type: GET_CONTRACTS,
         payload: ofContract
     });
+};
+
+export const getCurrentState = (contract, account) => async (dispatch) => {
+    try {
+        console.log('current state action');
+        const currentState = await contract.methods.getCurrentState().send({ from: account, gas: 50000 });
+        console.log('current state: ' + currentState);
+        dispatch({
+            type: GET_CURRENT_STATE,
+            payload: currentState
+        });
+    } catch (err) {
+        alert('Cannot get current game state, please check console');
+        console.log(err);
+    }
+};
+
+export const enterName = (name) => dispatch => {
+    dispatch({
+        type: ENTER_NAME,
+        payload: name
+    });
+};
+
+export const createNewGame = (contract, account, name) => async (dispatch) => {
+    try {
+        const gameCreated = await contract.methods.createNewGame(name).send({ from: account, gas: 50000 });
+        dispatch({
+            type: CREATE_GAME,
+            payload: { name: name, gameCreated: gameCreated }
+        });
+    } catch (err) {
+        alert(err);
+        console.log(err);
+    }
 };
 
 export const toggleModal = (i) => dispatch => {

@@ -1,3 +1,6 @@
+export const ENTER_NAME = 'ENTER_NAME';
+export const GET_CURRENT_STATE = 'GET_CURRENT_STATE';
+export const CREATE_GAME = 'CREATE_GAME';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 export const GET_COLOR = 'GET_COLOR';
 export const UPDATE_GAMEBOARD = 'UPDATE_GAMEBOARD';
