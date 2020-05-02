@@ -70,8 +70,8 @@ contract othellofactory is Board{
             return false;
         }
         else{
-           removeUsersFromGame();
            emit Forfeit(getMyOpponent());  // emits forfeit event to let the other player know and display him as winner
+           removeUsersFromGame();
            return true; // if true the player who forfeited will be displayed as looser
         }
         
@@ -159,6 +159,8 @@ contract othellofactory is Board{
             return(true, winner, isDraw);
         }
         existingGames[playerToGames[msg.sender]].isMovePassed=true;
+        existingGames[playerToGames[msg.sender]].isWhiteTurn=!existingGames[playerToGames[msg.sender]].isWhiteTurn; // Should also change the turn and emit YourTurn event
+        emit YourTurn(getMyOpponent());
         return (false,msg.sender,false);
     }
     

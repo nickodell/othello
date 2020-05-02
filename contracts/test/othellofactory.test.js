@@ -1,7 +1,4 @@
 const Factory = artifacts.require("othellofactory");
-const EMPTY = "0";
-const BLACK = "1";
-const WHITE = "3";
 
 contract("Factory", async accounts => {
     let [alice, bob, eve, john] = accounts;
@@ -27,9 +24,30 @@ contract("Factory", async accounts => {
         const opponent = await factory.getMyOpponent({from:bob});
         assert.equal(opponent,alice);
     })
-    it("getCurrentState is working fine", async()=>{
-        const state = await factory.getCurrentState({from:eve});
-        assert.equal(state,"IDLE");
+    it("forfeit is working fine", async()=>{
+        const result = await factory.forfeit({from:alice});
+        assert.equal(result.logs[0].args[0],bob);
     })
-
+    it("passMove is working fine", async() => {
+        await factory.createNewGame("alice", {from: alice});
+        await factory.createNewGame("bob", {from: bob});
+        await factory.passMove({from:bob});
+        const result= await factory.getMyGame({from:bob});
+        assert.equal(result[6],true);
+    })
+    it("end is working fine", async() => {
+        await factory.createNewGame("eve", {from: eve});
+        await factory.createNewGame("john", {from: john});
+        await factory.playMove(2,3,{from:john});
+        await factory.passMove({from:eve});
+        const result = await factory.passMove({from:john});
+        assert.equal(result.logs[0].args['winner'],john);
+    })
+    it("playMove is working fine", async() => {
+        await factory.createNewGame("eve", {from: eve});
+        await factory.createNewGame("john", {from: john});
+        await factory.playMove(2,3,{from:john});
+        const result = await factory.getMyGame({from:eve});
+        assert.equal(result[4],eve);
+    })
 })
