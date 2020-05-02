@@ -1,4 +1,4 @@
-import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME, TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS } from './types';
+import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME, TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS, YOUR_TURN } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 import othellofactory from '../contracts/othellofactory.json';
@@ -141,6 +141,24 @@ export const playMove = (index, contract, account) => async (dispatch) => {
             type: PLAY_MOVE,
             payload: true
         });
+    }
+};
+
+export const yourTurn = (contract, account) => async (dispatch) => {
+    try {
+        await contract.YourTurn((e, r) => {
+            if (e) {
+                return error(e);
+            }
+            if (r.args.player === account) {
+                dispatch({
+                    type: YOUR_TURN
+                });
+            }
+        });
+    } catch (err) {
+        alert('Error in getting YourTurn Event, please check console');
+        console.log(err);
     }
 };
 

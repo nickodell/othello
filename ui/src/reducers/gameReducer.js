@@ -34,6 +34,11 @@ export default function (state=initialState, action) {
             return {
                 ...state
             };
+        case YOUR_TURN:
+            return {
+                ...state,
+                myTurn: true
+            };
         default:
             return state;
     }

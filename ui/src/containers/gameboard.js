@@ -24,6 +24,10 @@ class GameBoard extends Component {
             await this.props.getGamestate(this.props.ofContract);
             await this.props.getLegalMoves(this.props.ofContract);
         }
+        if ((!prevProps.myTurn) && (this.props.myTurn)) {
+            await this.props.getGamestate(this.props.ofContract);
+            await this.props.getLegalMoves(this.props.ofContract)
+        }
     }
 
     render() {
