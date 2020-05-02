@@ -4,9 +4,10 @@ pragma experimental ABIEncoderV2;
 import "./Board.sol";
 contract othellofactory is Board{
     
-    event NewGame(address player1, address player2);
+    event NewGame(address black, address white);
     event YourTurn(address player);
     event Forfeit(address nonForfeitedPlayer);
+    event EndGame(address black, address white);
 
     struct Game{
         string black;
@@ -15,11 +16,12 @@ contract othellofactory is Board{
         address whiteaddress;
         bool isWhiteTurn;
         uint128 gameState;
+        bool isMovePassed;
     }
     
     
     Game[] private existingGames;
-    address[] private waitlistPlayerids;
+    address[] waitlistPlayerids;
     string waitlistPlayerName;
     
     mapping (address => bool) activelyPlaying;
@@ -34,7 +36,6 @@ contract othellofactory is Board{
        
        // If there is already another player waiting to play game, New game will be created otherwise player will be added to waitlist
        if (waitlistPlayerids.length==0){   
-
            waitlistPlayerids.push(msg.sender);
            waitlistPlayerName=name;
            return false;
@@ -44,7 +45,7 @@ contract othellofactory is Board{
       currentGame.gameState=0;
       address waitlistPlayerid=waitlistPlayerids[0];
       delete waitlistPlayerids;
-      currentGame=Game(name, waitlistPlayerName,msg.sender,waitlistPlayerid,false,currentGame.gameState);
+      currentGame=Game(name, waitlistPlayerName,msg.sender,waitlistPlayerid,false,currentGame.gameState,false);
       currentGameId=existingGames.push(currentGame)-1;
       initializeBoard(currentGame.gameState,currentGame.blackaddress,currentGame.whiteaddress,currentGame.isWhiteTurn,true);
       
@@ -66,18 +67,22 @@ contract othellofactory is Board{
             return false;
         }
         else{
-           address opponent= getMyOpponent();
-           activelyPlaying[opponent]=false;
-           activelyPlaying[msg.sender]=false;
-           delete playerToGames[msg.sender];
-           delete playerToGames[opponent];
-           emit Forfeit(opponent);  // emits forfeit event to let the other player know and display him as winner
+           removeUsersFromGame();
+           emit Forfeit(getMyOpponent());  // emits forfeit event to let the other player know and display him as winner
            return true; // if true the player who forfeited will be displayed as looser
         }
         
     }
     
-    
+   // Removes the players from their games, enabling them to join new game
+   function removeUsersFromGame() public{
+       address opponent= getMyOpponent();
+       activelyPlaying[opponent]=false;
+       activelyPlaying[msg.sender]=false;
+       delete playerToGames[msg.sender];
+       delete playerToGames[opponent]; 
+   }
+   
    // Returns the updated Game struct of the player if he has any game
     function getMyGame() public view returns(Game memory){
         require(activelyPlaying[msg.sender]==true,"You are not in any game");
@@ -100,6 +105,7 @@ contract othellofactory is Board{
     // Takes the row index and column index of the 8*8 game board
     function playMove(int8 x, int8 y) public {
         Game memory currentGame = setGameState();
+        existingGames[playerToGames[msg.sender]].isMovePassed=false;
         _playMove(x,y);
         saveGameState(currentGame);
         emit YourTurn(getAddress(whitesMove));
@@ -136,6 +142,47 @@ contract othellofactory is Board{
             return getMyGame().whiteaddress;
         }
         return getMyGame().blackaddress;
+    }
+    
+    
+   // returns if the game is end, for the ui to know if they have to call endGame function
+    // winner and isDraw are only valid if isGameEnd is true
+    function passMove() public returns(bool isGameEnd, address winner, bool isDraw){
+        if(getMyGame().isMovePassed==true){
+            (address winner,bool isDraw)=endGame();
+            return(true, winner, isDraw);
+        }
+        existingGames[playerToGames[msg.sender]].isMovePassed=true;
+        return (false,msg.sender,false);
+    }
+    
+    // If isDraw is true no player is winner but this function returns black as winner please ignore the winner when isDraw is true
+    // If isDraw is false then returns the winner
+    // Also emits an event called endGame to notify both the users the game is end
+    function endGame() public returns(address winner, bool isDraw){
+        uint8[64] memory tiles =getTilesArray();
+        uint8 black;
+        uint8 white;
+        address blackaddress=getMyGame().blackaddress;
+        address whiteaddress=getMyGame().whiteaddress;
+        for(uint8 tile = 0; tile < 64; tile += 1) {
+            if(tiles[tile]==1){
+                black+=1;
+            } 
+            else if(tiles[tile]==3){
+                white+=1;
+            }
+        }
+        removeUsersFromGame();
+        emit EndGame(blackaddress,whiteaddress);
+        
+        if(white==black){
+            return(blackaddress, true);
+        }
+        winner=black>white?blackaddress:whiteaddress;
+
+        return(winner, false);
+            
     }
     
     // Return the currentState of player's game
