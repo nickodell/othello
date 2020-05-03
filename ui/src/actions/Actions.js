@@ -141,7 +141,7 @@ export const passMove = (contract, account) => async (dispatch) => {
     }
 };
 
-export const yourTurn = (contract, account) => async (dispatch) => {
+export const yourTurnEvent = (contract, account) => async (dispatch) => {
     try {
         await contract.events.YourTurn((e, r) => {
             console.log("error", e);
