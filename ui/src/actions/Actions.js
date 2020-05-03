@@ -112,8 +112,8 @@ export const playMove = (index, contract, account) => async (dispatch) => {
             type: PLAY_MOVE,
             payload: false
         });
-        const x = Math.floor(index / 8);
-        const y = index % 8;
+        const y = Math.floor(index / 8);
+        const x = index % 8;
         console.log('Playing move: (' + x + ', ' + y + ')')
         await contract.methods.playMove(x, y).send({ from: account, gas: 6721975 });
         console.log('Successfully played move');
