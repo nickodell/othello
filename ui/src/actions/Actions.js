@@ -127,6 +127,19 @@ export const playMove = (index, contract, account) => async (dispatch) => {
     }
 };
 
+export const passMove = (contract, account) => async (dispatch) => {
+    try {
+        await contract.methods.passMove().send({ from: account, gas: 6721975 });
+        dispatch({
+            type: PLAY_MOVE,
+            payload: false
+        });
+    } catch (err) {
+        alert('Pass move failed, please check console');
+        console.log(err);
+    }
+};
+
 export const yourTurn = (contract, account) => async (dispatch) => {
     try {
         await contract.events.YourTurn((e, r) => {

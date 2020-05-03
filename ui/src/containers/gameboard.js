@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getMyColor, getGamestate, getLegalMoves, playMove, forfeitGame, toggleModal } from '../actions/Actions';
+import { getMyColor, getGamestate, getLegalMoves, playMove, passMove, forfeitGame, toggleModal } from '../actions/Actions';
 
 import Square from '../components/square';
 
@@ -20,6 +20,9 @@ class GameBoard extends Component {
         }
         if (this.props.gameResult) {
             this.props.toggleModal(this.props.gameResult);
+        }
+        if ((!prevProps.myTurn) && (this.props.myTurn) && (this.props.legalMoves.includes(true))) {
+            this.props.passMove(this.props.ofContract, this.props.account);
         }
     }
 
@@ -72,4 +75,4 @@ const mapStateToProps = (state) => ({
     account: state.web3.account
 });
 
-export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, forfeitGame, toggleModal })(GameBoard);
+export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, passMove, forfeitGame, toggleModal })(GameBoard);
