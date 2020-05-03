@@ -217,7 +217,10 @@ export const endGameEvent = (contract, account) => async (dispatch) => {
                 throw new Error(e);
             }
             let gameResult = 'LOSER';
-            if (r.args.winner === account) {
+            if (r.args.isDraw) {
+                gameResult = 'DRAW';
+            }
+            else if (r.args.winner === account) {
                 gameResult = 'WINNER';
             }
             dispatch({
@@ -225,5 +228,8 @@ export const endGameEvent = (contract, account) => async (dispatch) => {
                 payload: gameResult
             });
         });
+    } catch (err) {
+        alert('Error getting EndGame event, please check console');
+        console.log(err);
     }
 };
