@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getMyColor, getGamestate, getLegalMoves, playMove, passMove, forfeitGame, toggleModal } from '../actions/Actions';
+import { getMyColor, getGamestate, getLegalMoves, playMove, passMove, getCurrentTurnAddress, forfeitGame, toggleModal } from '../actions/Actions';
 
 import Square from '../components/square';
 
@@ -12,6 +12,7 @@ class GameBoard extends Component {
             await this.props.getMyColor(this.props.ofContract, this.props.account);
         }
         if (this.props.gameResult === null) {
+            await this.props.getCurrentTurnAddress(this.props.ofContract, this.props.account);
             await this.props.getGamestate(this.props.ofContract, this.props.account);
         }
         if (this.props.myTurn) {
@@ -86,4 +87,4 @@ const mapStateToProps = (state) => ({
     account: state.web3.account
 });
 
-export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, passMove, forfeitGame, toggleModal })(GameBoard);
+export default connect(mapStateToProps, { getMyColor, getGamestate, getLegalMoves, playMove, passMove, getCurrentTurnAddress, forfeitGame, toggleModal })(GameBoard);

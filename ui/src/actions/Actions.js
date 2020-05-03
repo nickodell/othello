@@ -141,6 +141,23 @@ export const passMove = (contract, account) => async (dispatch) => {
     }
 };
 
+export const getCurrentTurnAddress = (contract, account) => async (dispatch) => {
+    try {
+        const currentTurnAddress = await contract.methods.getCurrentTurnAddress().call({ from: account });
+        let myTurn = false;
+        if (currentTurnAddress === account) {
+            myTurn = true;
+        }
+        dispatch({
+            type: YOUR_TURN,
+            payload: myTurn
+        });
+    } catch (err) {
+        alert('Cannot fetch current turn, please check console');
+        console.log(err);
+    }
+};
+
 export const yourTurnEvent = (contract, account) => async (dispatch) => {
     try {
         await contract.events.YourTurn((e, r) => {
