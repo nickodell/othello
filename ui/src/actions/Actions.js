@@ -150,7 +150,7 @@ export const getCurrentTurnAddress = (contract, account) => async (dispatch) => 
         }
         dispatch({
             type: YOUR_TURN,
-            payload: myTurn
+            payload: { myTurn: myTurn, latestGamestate: true }
         });
     } catch (err) {
         alert('Cannot fetch current turn, please check console');
@@ -170,7 +170,7 @@ export const yourTurnEvent = (contract, account) => async (dispatch) => {
             }
             dispatch({
                 type: YOUR_TURN,
-                payload: myTurn
+                payload: { myTurn: myTurn, latestGamestate: false }
             });
         });
     } catch (err) {
@@ -221,7 +221,7 @@ export const newGameEvent = (contract, account) => async (dispatch) => {
             if (r.returnValues.black === account) {
                 dispatch({
                     type: YOUR_TURN,
-                    payload: true
+                    payload: { myTurn: true, latestGamestate: true }
                 });
             }
         });

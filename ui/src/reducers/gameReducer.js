@@ -3,6 +3,7 @@ import { GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, 
 const initialState = {
     gamestate: [],
     legalMoves: [],
+    latestGamestate: true,
     myTurn: false,
     myColor: null,
     gameResult: null
@@ -18,7 +19,8 @@ export default function (state=initialState, action) {
         case UPDATE_GAMEBOARD:
             return {
                 ...state,
-                gamestate: action.payload
+                gamestate: action.payload,
+                latestGamestate: true
             };
         case GET_LEGAL_MOVES:
             return {
@@ -38,7 +40,8 @@ export default function (state=initialState, action) {
         case YOUR_TURN:
             return {
                 ...state,
-                myTurn: action.payload
+                myTurn: action.payload.myTurn,
+                latestGamestate: action.payload.latestGamestate
             };
         case END_GAME:
             return {

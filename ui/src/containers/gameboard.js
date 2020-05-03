@@ -21,6 +21,9 @@ class GameBoard extends Component {
     }
 
     async componentDidUpdate(prevProps) {
+        if ((prevProps.latestGamestate) && (!this.props.latestGamestate)) {
+            await this.props.getGamestate(this.props.ofContract, this.props.account);
+        }
         if ((!prevProps.myTurn) && (this.props.myTurn)) {
             await this.props.getGamestate(this.props.ofContract, this.props.account);
             await this.props.getLegalMoves(this.props.ofContract, this.props.account);
@@ -71,6 +74,7 @@ GameBoard.propTypes = {
     gamestate: PropTypes.array.isRequired,
     legalMoves: PropTypes.array.isRequired,
     myTurn: PropTypes.bool,
+    latestGamestate: PropTypes.bool,
     gameResult: PropTypes.string,
     myColor: PropTypes.string,
     ofContract: PropTypes.object,
@@ -81,6 +85,7 @@ const mapStateToProps = (state) => ({
     gamestate: state.game.gamestate,
     legalMoves: state.game.legalMoves,
     myTurn: state.game.myTurn,
+    latestGamestate: state.game.latestGamestate,
     gameResult: state.game.gameResult,
     myColor: state.game.myColor,
     ofContract: state.web3.ofContract,
