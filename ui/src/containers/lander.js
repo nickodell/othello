@@ -6,7 +6,7 @@ import { getCurrentState, enterName, createNewGame } from '../actions/Actions';
 
 class Lander extends Component {
     async componentDidUpdate(prevProps) {
-        if ((prevProps.ofContract === null) && (this.props.ofContract)) {
+        if (((prevProps.ofContract === null) && (this.props.ofContract)) || ((prevProps.gameCreated === null) && (this.props.gameCreated))) {
             await this.props.getCurrentState(this.props.ofContract, this.props.account);
         }
     }
