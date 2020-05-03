@@ -18,9 +18,6 @@ class GameBoard extends Component {
             await this.props.getGamestate(this.props.ofContract, this.props.account);
             await this.props.getLegalMoves(this.props.ofContract, this.props.account)
         }
-        if (this.props.gameResult) {
-            this.props.toggleModal(this.props.gameResult);
-        }
         if ((!prevProps.myTurn) && (this.props.myTurn) && (this.props.legalMoves.includes(true))) {
             this.props.passMove(this.props.ofContract, this.props.account);
         }
