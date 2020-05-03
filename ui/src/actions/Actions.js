@@ -97,9 +97,10 @@ export const getGamestate = (contract, account) => async (dispatch) => {
 export const getLegalMoves = (contract, account) => async (dispatch) => {
     try {
         const legalMoves = await contract.methods.getValidMoves().call({ from: account });
+        const legalMovesParsed = legalMoves.map(val => parseInt(val));
         dispatch({
             type: GET_LEGAL_MOVES,
-            payload: legalMoves
+            payload: legalMovesParsed
         });
     } catch (err) {
         alert('Cannot fetch legal moves, please check console');
