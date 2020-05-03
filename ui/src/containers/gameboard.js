@@ -7,23 +7,13 @@ import { getMyColor, getGamestate, getLegalMoves, playMove, forfeitGame, toggleM
 import Square from '../components/square';
 
 class GameBoard extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.props.getGamestate();
-    //     this.props.getLegalMoves(this.props.ofContract);
-    // }
-    // async componentDidMount() {
-    //     await this.props.getGamestate(this.props.ofContract);
-    //     await this.props.getLegalMoves(this.props.ofContract);
-    // }
+    async componentDidMount() {
+        await this.props.getMyColor(this.props.ofContract, this.props.account);
+        await this.props.getGamestate(this.props.ofContract);
+        await this.props.getLegalMoves(this.props.ofContract);
+    }
 
     async componentDidUpdate(prevProps) {
-        if ((prevProps.ofContract === null) && (this.props.ofContract)) {
-            console.log('GAMEBOARD');
-            await this.props.getMyColor(this.props.ofContract, this.props.account);
-            await this.props.getGamestate(this.props.ofContract);
-            await this.props.getLegalMoves(this.props.ofContract);
-        }
         if ((!prevProps.myTurn) && (this.props.myTurn)) {
             await this.props.getGamestate(this.props.ofContract);
             await this.props.getLegalMoves(this.props.ofContract)
