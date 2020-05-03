@@ -12,8 +12,10 @@ class Modal extends Component {
             2: '',
             3: 'Black',
             'WINNER': 'Winner winner, chicken dinner!',
-            'LOSER': 'You\'ve lost :('
+            'LOSER': 'You\'ve lost :(',
+            'DRAW': 'Game was a draw!'
         };
+
         let modalDiv = null;
         if (this.props.showModal) {
             modalDiv = (
