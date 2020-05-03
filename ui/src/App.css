@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  background-color: #61dafb;
+  background-image: linear-gradient(#61dafb, #6b61fb);
   position: absolute;
   height: 100%;
   width: 100%;
@@ -23,19 +23,68 @@
   vertical-align: middle;
 }
 
+.modal {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.modalContent {
+  position: absolute;
+  background-color: white;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  border: 2px solid black;
+}
+
+.lander {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.nameInput {
+  font-size: 2rem;
+  line-height: 2rem;
+  min-width: 10rem;
+  padding: .5em 1.5em;
+  border-radius: 2rem;
+  border: 0px;
+  margin-right: .5rem;
+}
+
 .gameboard {
   grid-column: 2;
   grid-row: 2;
-  background-color: black;
+  background-image: linear-gradient(to bottom right, green, rgb(165, 161, 161, 0.75));
   display: grid;
-  grid-template-columns: repeat(4, 5rem);
+  grid-template-columns: repeat(8, 5rem);
   grid-auto-rows: 5rem;
-  gap: 3px;
-  padding: 3px;
+  margin: 3px;
+  border: 1px solid black;
+}
+
+.rightBar {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.btn {
+  color: white;
+  background-image: linear-gradient(to right, rgb(255, 102, 0), rgb(255, 204, 0));
+  font-size: 2rem;
+  line-height: 2rem;
+  padding: .5em 1.5em;
+  border-radius: 2rem;
+  border: 0px;
 }
 
 .tile {
-  background-color: green;
+  border: 1px solid black;
   line-height: 5em;
 }
 

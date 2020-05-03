@@ -1,7 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import GameBoard from './containers/gameboard';
+import Web3Container from './containers/web3container';
+import Modal from './containers/modal';
+import AppContainer from './containers/appContainer';
 
 import store from './store';
 
@@ -16,7 +18,9 @@ function App() {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="title">Othello</h1>
         </div>
-        <GameBoard />
+        <Web3Container />
+        <AppContainer />
+        <Modal />
       </div>
     </Provider>
   );

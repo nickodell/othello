@@ -1,2 +1,14 @@
+export const ENTER_NAME = 'ENTER_NAME';
+export const GET_CURRENT_STATE = 'GET_CURRENT_STATE';
+export const CREATE_GAME = 'CREATE_GAME';
+export const TOGGLE_MODAL = 'TOGGLE_MODAL';
+export const GET_COLOR = 'GET_COLOR';
 export const UPDATE_GAMEBOARD = 'UPDATE_GAMEBOARD';
 export const GET_LEGAL_MOVES = 'GET_LEGAL_MOVES';
+export const PLAY_MOVE = 'PLAY_MOVE';
+export const FORFEIT_GAME = 'FORFEIT_GAME';
+export const GET_WEB3_INSTANCE = 'GET_WEB3_INSTANCE';
+export const GET_CONTRACTS = 'GET_CONTRACTS';
+export const YOUR_TURN = 'YOUR_TURN';
+export const NEW_GAME = 'NEW_GAME';
+export const END_GAME = 'END_GAME';
