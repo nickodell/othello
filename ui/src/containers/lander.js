@@ -5,11 +5,6 @@ import PropTypes from 'prop-types';
 import { getCurrentState, enterName, createNewGame } from '../actions/Actions';
 
 class Lander extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     getCurrentState(this.props.ofContract, this.props.account);
-    // }
-
     async componentDidUpdate(prevProps) {
         if ((prevProps.ofContract === null) && (this.props.ofContract)) {
             await this.props.getCurrentState(this.props.ofContract, this.props.account);
@@ -18,10 +13,9 @@ class Lander extends Component {
 
     render() {
         let displayThis = null;
-        console.log(this.props.currentState);
         if (this.props.currentState === 'IDLE') {
             displayThis = (
-                <form onSubmit={() => this.props.createNewGame(this.props.ofContract, this.props.account, this.props.name)}>
+                <form onSubmit={ async () => await this.props.createNewGame(this.props.ofContract, this.props.account, this.props.name) }>
                     <input type="text" placeholder="Your name here" value={this.props.name} onChange={(e) => this.props.enterName(e.target.value)} className="nameInput" />
                     <button type="submit" className="btn">Submit</button>
                 </form>
