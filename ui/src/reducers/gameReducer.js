@@ -18,8 +18,7 @@ export default function (state=initialState, action) {
         case UPDATE_GAMEBOARD:
             return {
                 ...state,
-                gamestate: action.payload.gamestate,
-                myTurn: action.payload.myTurn
+                gamestate: action.payload
             };
         case GET_LEGAL_MOVES:
             return {

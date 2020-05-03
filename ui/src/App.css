@@ -62,7 +62,7 @@
   grid-row: 2;
   background-image: linear-gradient(to bottom right, green, rgb(165, 161, 161, 0.75));
   display: grid;
-  grid-template-columns: repeat(4, 5rem);
+  grid-template-columns: repeat(8, 5rem);
   grid-auto-rows: 5rem;
   margin: 3px;
   border: 1px solid black;

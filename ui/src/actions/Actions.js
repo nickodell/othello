@@ -84,43 +84,30 @@ export const getMyColor = (contract, account) => async (dispatch) => {
     }
 };
 
-export const getGamestate = (contract, myColor) => async (dispatch) => {
+export const getGamestate = (contract) => async (dispatch) => {
     try {
         const tiles = await contract.methods.getTilesArray().call();
-        // dispatch
+        dispatch({
+            type: UPDATE_GAMEBOARD,
+            payload: tiles
+        });
     } catch (err) {
         alert('Cannot fetch gamestate, please check console');
         console.log(err);
     }
-    const parsedGamestate = {
-        gamestate: [0, 0, 0, 0, 0, 1, 3, 0, 0, 3, 1, 0, 0, 0, 0, 0],
-        myTurn: true
-    };
-
-    dispatch({
-        type: UPDATE_GAMEBOARD,
-        payload: parsedGamestate
-    });
 };
 
 export const getLegalMoves = (contract) => async (dispatch) => {
     try {
         const legalMoves = await contract.methods.getValidMoves().call();
-        const parsedLegalMoves = await legalMoves.json();
-        console.log('LEGAL MOVES: ' + parsedLegalMoves)
-        // dispatch ...
+        dispatch({
+            type: GET_LEGAL_MOVES,
+            payload: legalMoves
+        });
     } catch (err) {
         alert('Cannot fetch legal moves, please check console');
         console.log(err);
     }
-    const parsedLegalMoves = {
-        legalMoves: [false, true, false, false, true, false, false, false, false, false, false, true, false, false, true, false]
-    };
-
-    dispatch({
-        type: GET_LEGAL_MOVES,
-        payload: parsedLegalMoves.legalMoves
-    });
 };
 
 export const playMove = (index, contract, account) => async (dispatch) => {
@@ -129,8 +116,8 @@ export const playMove = (index, contract, account) => async (dispatch) => {
             type: PLAY_MOVE,
             payload: false
         });
-        const x = Math.floor(index / 4);
-        const y = index % 4;
+        const x = Math.floor(index / 8);
+        const y = index % 8;
         console.log('Playing move: (' + x + ', ' + y + ')')
         await contract.methods.playMove(x, y).send({ from: account, gas: 50000 });
         console.log('Successfully played move');
