@@ -1,4 +1,4 @@
-import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME, TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS, YOUR_TURN, NEW_GAME } from './types';
+import { GET_CURRENT_STATE, ENTER_NAME, CREATE_GAME, TOGGLE_MODAL, GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, GET_WEB3_INSTANCE, GET_CONTRACTS, YOUR_TURN, NEW_GAME, END_GAME } from './types';
 import getWeb3 from '../utils/getWeb3';
 
 import othellofactory from '../contracts/othellofactory.json';
@@ -207,5 +207,23 @@ export const newGameEvent = (contract) => async (dispatch) => {
     } catch (err) {
         alert('Error getting NewGame event, please check console');
         console.log(err);
+    }
+};
+
+export const endGameEvent = (contract, account) => async (dispatch) => {
+    try {
+        await contract.events.EndGame((e, r) => {
+            if (e) {
+                throw new Error(e);
+            }
+            let gameResult = 'LOSER';
+            if (r.args.winner === account) {
+                gameResult = 'WINNER';
+            }
+            dispatch({
+                type: END_GAME,
+                payload: gameResult
+            });
+        });
     }
 };

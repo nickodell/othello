@@ -24,6 +24,9 @@ class GameBoard extends Component {
         if ((!prevProps.myTurn) && (this.props.myTurn) && (this.props.legalMoves.includes(true))) {
             this.props.passMove(this.props.ofContract, this.props.account);
         }
+        if ((!prevProps.gameResult) && (this.props.gameResult)) {
+            this.props.toggleModal(this.props.gameResult);
+        }
     }
 
     render() {

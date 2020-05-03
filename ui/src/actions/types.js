@@ -11,3 +11,4 @@ export const GET_WEB3_INSTANCE = 'GET_WEB3_INSTANCE';
 export const GET_CONTRACTS = 'GET_CONTRACTS';
 export const YOUR_TURN = 'YOUR_TURN';
 export const NEW_GAME = 'NEW_GAME';
+export const END_GAME = 'END_GAME';

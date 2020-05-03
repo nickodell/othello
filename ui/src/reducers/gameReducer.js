@@ -1,4 +1,4 @@
-import { GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, YOUR_TURN } from '../actions/types';
+import { GET_COLOR, UPDATE_GAMEBOARD, GET_LEGAL_MOVES, PLAY_MOVE, FORFEIT_GAME, YOUR_TURN, END_GAME } from '../actions/types';
 
 const initialState = {
     gamestate: [],
@@ -44,6 +44,11 @@ export default function (state=initialState, action) {
             return {
                 ...state,
                 myTurn: true
+            };
+        case END_GAME:
+            return {
+                ...state,
+                gameResult: action.payload
             };
         default:
             return state;
