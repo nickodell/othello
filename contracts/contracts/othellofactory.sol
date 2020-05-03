@@ -7,7 +7,7 @@ contract othellofactory is Board{
     event NewGame(address black, address white);
     event YourTurn(address player);
     event Forfeit(address nonForfeitedPlayer);
-    event EndGame(address winner, address loser);
+    event EndGame(address winner, address loser, bool isDraw);
 
     struct Game{
         string black;
@@ -184,11 +184,10 @@ contract othellofactory is Board{
         }
         removeUsersFromGame();
         
-        _isDraw=white==black?true:false;
+        _isDraw=white==black;
         _winner=black>=white?blackaddress:whiteaddress;
         address _looser=_winner==blackaddress?whiteaddress:blackaddress;
-        emit EndGame(_winner,_looser);
-
+        emit EndGame(_winner,_looser, _isDraw);
         return(_winner, _isDraw);
             
     }
