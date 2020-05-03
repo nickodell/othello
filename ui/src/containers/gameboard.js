@@ -8,17 +8,23 @@ import Square from '../components/square';
 
 class GameBoard extends Component {
     async componentDidMount() {
-        await this.props.getMyColor(this.props.ofContract, this.props.account);
-        await this.props.getGamestate(this.props.ofContract, this.props.account);
-        await this.props.getLegalMoves(this.props.ofContract, this.props.account);
+        if (this.props.myColor === null) {
+            await this.props.getMyColor(this.props.ofContract, this.props.account);
+        }
+        if (this.props.gameResult === null) {
+            await this.props.getGamestate(this.props.ofContract, this.props.account);
+        }
+        if (this.props.myTurn) {
+            await this.props.getLegalMoves(this.props.ofContract, this.props.account);
+        }
     }
 
     async componentDidUpdate(prevProps) {
         if ((!prevProps.myTurn) && (this.props.myTurn)) {
             await this.props.getGamestate(this.props.ofContract, this.props.account);
-            await this.props.getLegalMoves(this.props.ofContract, this.props.account)
+            await this.props.getLegalMoves(this.props.ofContract, this.props.account);
         }
-        if ((!prevProps.myTurn) && (this.props.myTurn) && (this.props.legalMoves.includes(true))) {
+        if ((!prevProps.myTurn) && (this.props.myTurn) && (!this.props.legalMoves.includes(1))) {
             this.props.passMove(this.props.ofContract, this.props.account);
         }
         if ((!prevProps.gameResult) && (this.props.gameResult)) {
@@ -28,7 +34,7 @@ class GameBoard extends Component {
 
     render() {
         const board = this.props.gamestate.map((val, i) => {
-            if ((this.props.legalMoves[i] === 1) && (!this.props.myTurn)) {
+            if ((this.props.legalMoves[i] === 1) && (this.props.myTurn)) {
                 return (
                     <div key={i} className="tile" onClick={() => this.props.playMove(i, this.props.ofContract, this.props.account)}>
                         <Square values={2} />
