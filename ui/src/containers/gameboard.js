@@ -9,14 +9,14 @@ import Square from '../components/square';
 class GameBoard extends Component {
     async componentDidMount() {
         await this.props.getMyColor(this.props.ofContract, this.props.account);
-        await this.props.getGamestate(this.props.ofContract);
-        await this.props.getLegalMoves(this.props.ofContract);
+        await this.props.getGamestate(this.props.ofContract, this.props.account);
+        await this.props.getLegalMoves(this.props.ofContract, this.props.account);
     }
 
     async componentDidUpdate(prevProps) {
         if ((!prevProps.myTurn) && (this.props.myTurn)) {
-            await this.props.getGamestate(this.props.ofContract);
-            await this.props.getLegalMoves(this.props.ofContract)
+            await this.props.getGamestate(this.props.ofContract, this.props.account);
+            await this.props.getLegalMoves(this.props.ofContract, this.props.account)
         }
         if (this.props.gameResult) {
             this.props.toggleModal(this.props.gameResult);
@@ -31,7 +31,7 @@ class GameBoard extends Component {
 
     render() {
         const board = this.props.gamestate.map((val, i) => {
-            if (this.props.legalMoves[i]) {
+            if ((this.props.legalMoves[i]) && (!this.props.myTurn)) {
                 return (
                     <div key={i} className="tile" onClick={() => this.props.playMove(i, this.props.ofContract, this.props.account)}>
                         <Square values={"2"} />
