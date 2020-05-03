@@ -14,7 +14,7 @@ class Web3Container extends Component {
     async componentDidUpdate(prevProps) {
         if ((prevProps.ofContract === null) && (this.props.ofContract)) {
             await this.props.yourTurn(this.props.ofContract, this.props.account);
-            await this.props.newGameEvent(this.props.ofContract);
+            await this.props.newGameEvent(this.props.ofContract, this.props.account);
             await this.props.forfeitEvent(this.props.ofContract, this.props.account);
             await this.props.endGameEvent(this.props.ofContract, this.props.account);
         }

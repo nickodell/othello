@@ -191,7 +191,7 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
     }
 };
 
-export const newGameEvent = (contract) => async (dispatch) => {
+export const newGameEvent = (contract, account) => async (dispatch) => {
     try {
         await contract.events.NewGame((e, r) => {
             if (e) {
@@ -200,6 +200,11 @@ export const newGameEvent = (contract) => async (dispatch) => {
             dispatch({
                 type: NEW_GAME
             });
+            if (r.returnValues.black === account) {
+                dispatch({
+                    type: YOUR_TURN
+                });
+            }
         });
     } catch (err) {
         alert('Error getting NewGame event, please check console');
