@@ -12,8 +12,8 @@ function getIcon(val) {
     // replace strings with icons
     if (val === "0") return '';
     else if (val === "2") return legalPng;
-    else if (val === "1") return whitePng;
-    else if (val === "3") return blackPng;
+    else if (val === "3") return whitePng;
+    else if (val === "1") return blackPng;
     else return 'error';
 }
 
