@@ -32,7 +32,7 @@ class Modal extends Component {
 
 Modal.propTypes = {
     showModal: PropTypes.bool,
-    tileValue: PropTypes.string
+    tileValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 
 const mapStateToProps = (state) => ({
