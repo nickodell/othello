@@ -80,9 +80,9 @@ export const getMyColor = (contract, account) => async (dispatch) => {
     }
 };
 
-export const getGamestate = (contract) => async (dispatch) => {
+export const getGamestate = (contract, account) => async (dispatch) => {
     try {
-        const tiles = await contract.methods.getTilesArray().call();
+        const tiles = await contract.methods.getTilesArray().call({ from: account });
         dispatch({
             type: UPDATE_GAMEBOARD,
             payload: tiles
@@ -93,9 +93,9 @@ export const getGamestate = (contract) => async (dispatch) => {
     }
 };
 
-export const getLegalMoves = (contract) => async (dispatch) => {
+export const getLegalMoves = (contract, account) => async (dispatch) => {
     try {
-        const legalMoves = await contract.methods.getValidMoves().call();
+        const legalMoves = await contract.methods.getValidMoves().call({ from: account });
         dispatch({
             type: GET_LEGAL_MOVES,
             payload: legalMoves
