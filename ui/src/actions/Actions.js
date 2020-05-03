@@ -176,7 +176,7 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
                 throw new Error(e);
             }
             let gameResult = 'LOSER';
-            if (r.args.nonForfeitedPlayer === account) {
+            if (r.returnValues.nonForfeitedPlayer === account) {
                 gameResult = 'WINNER';
             }
             dispatch({
@@ -213,10 +213,10 @@ export const endGameEvent = (contract, account) => async (dispatch) => {
                 throw new Error(e);
             }
             let gameResult = 'LOSER';
-            if (r.args.isDraw) {
+            if (r.returnValues.isDraw) {
                 gameResult = 'DRAW';
             }
-            else if (r.args.winner === account) {
+            else if (r.returnValues.winner === account) {
                 gameResult = 'WINNER';
             }
             dispatch({
