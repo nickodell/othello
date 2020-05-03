@@ -25,9 +25,11 @@ export default function (state=initialState, action) {
             if (((state.myColor === 'WHITE') && (action.payload.whiteToMove)) || ((state.myColor === 'BLACK') && (!action.payload.whiteToMove))) {
                 myTurn = true;
             }
+            // console.log("action.payload", action.payload)
+            // console.log("validMoves", action.payload.validMoves)
             return {
                 ...state,
-                legalMoves: action.payload.validMoves,
+                legalMoves: action.payload,
                 myTurn: myTurn
             };
         case PLAY_MOVE:

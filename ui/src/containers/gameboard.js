@@ -62,7 +62,7 @@ GameBoard.propTypes = {
     getGamestate: PropTypes.func.isRequired,
     getLegalMoves: PropTypes.func.isRequired,
     gamestate: PropTypes.array.isRequired,
-    legalMoves: PropTypes.array,
+    legalMoves: PropTypes.array.isRequired,
     myTurn: PropTypes.bool,
     gameResult: PropTypes.string,
     ofContract: PropTypes.object,

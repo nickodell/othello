@@ -101,10 +101,13 @@ contract othellofactory is Board{
     }
     
     // return the validMoves as a boolean 64 bit array with 1 for potential squares
-    function getValidMoves() public returns (bool[64] memory validMoves, bool whiteToMove){
+    function getValidMoves() public returns (uint8[64] memory validMoves){
         require(msg.sender==getCurrentTurnAddress(),"It is not your turn!");
         setGameState();
-        return _getValidMoves();
+        (bool[64] memory _validMoves, bool _unused) = _getValidMoves();
+        for(uint i = 0; i < 64; i++) {
+            validMoves[i] = _validMoves[i] ? 1 : 0;
+        }
     }
     
     // Takes the row index and column index of the 8*8 game board
