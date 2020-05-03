@@ -65,13 +65,14 @@ contract othellofactory is Board{
     
     // Returns true if the player can forfeit else false
     function forfeit() public returns(bool isForfeitSuccess){
+         address opponent= getMyOpponent();
         // player can only forfeit if he is in any game
         if(activelyPlaying[msg.sender]==false){
             return false;
         }
         else{
-           emit Forfeit(getMyOpponent());  // emits forfeit event to let the other player know and display him as winner
            removeUsersFromGame();
+           emit Forfeit(opponent);  // emits forfeit event to let the other player know and display him as winner
            return true; // if true the player who forfeited will be displayed as looser
         }
         
