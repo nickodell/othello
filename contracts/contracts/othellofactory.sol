@@ -7,7 +7,7 @@ contract othellofactory is Board{
     event NewGame(address black, address white);
     event YourTurn(address player);
     event Forfeit(address nonForfeitedPlayer);
-    event EndGame(address winner, address loser);
+    event EndGame(address winner, address loser, bool isDraw);
 
     struct Game{
         string black;
@@ -65,13 +65,14 @@ contract othellofactory is Board{
     
     // Returns true if the player can forfeit else false
     function forfeit() public returns(bool isForfeitSuccess){
+         address opponent= getMyOpponent();
         // player can only forfeit if he is in any game
         if(activelyPlaying[msg.sender]==false){
             return false;
         }
         else{
            removeUsersFromGame();
-           emit Forfeit(getMyOpponent());  // emits forfeit event to let the other player know and display him as winner
+           emit Forfeit(opponent);  // emits forfeit event to let the other player know and display him as winner
            return true; // if true the player who forfeited will be displayed as looser
         }
         
@@ -159,6 +160,8 @@ contract othellofactory is Board{
             return(true, winner, isDraw);
         }
         existingGames[playerToGames[msg.sender]].isMovePassed=true;
+        existingGames[playerToGames[msg.sender]].isWhiteTurn=!existingGames[playerToGames[msg.sender]].isWhiteTurn; // Should also change the turn and emit YourTurn event
+        emit YourTurn(getMyOpponent());
         return (false,msg.sender,false);
     }
     
@@ -181,11 +184,10 @@ contract othellofactory is Board{
         }
         removeUsersFromGame();
         
-        _isDraw=white==black?true:false;
+        _isDraw=white==black;
         _winner=black>=white?blackaddress:whiteaddress;
         address _looser=_winner==blackaddress?whiteaddress:blackaddress;
-        emit EndGame(_winner,_looser);
-
+        emit EndGame(_winner,_looser, _isDraw);
         return(_winner, _isDraw);
             
     }
