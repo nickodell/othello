@@ -50,6 +50,9 @@ class GameBoard extends Component {
                 <div className="rightBar">
                     <button className="btn" onClick={() => this.props.forfeitGame(this.props.ofContract, this.props.account)}>Forfeit</button>
                 </div>
+                <div className="bottomBar">
+                    I'm playing as {this.props.myColor}
+                </div>
             </Fragment>
         )
     }
@@ -62,6 +65,7 @@ GameBoard.propTypes = {
     legalMoves: PropTypes.array.isRequired,
     myTurn: PropTypes.bool,
     gameResult: PropTypes.string,
+    myColor: PropTypes.string,
     ofContract: PropTypes.object,
     account: PropTypes.string
 };
@@ -71,6 +75,7 @@ const mapStateToProps = (state) => ({
     legalMoves: state.game.legalMoves,
     myTurn: state.game.myTurn,
     gameResult: state.game.gameResult,
+    myColor: state.game.myColor,
     ofContract: state.web3.ofContract,
     account: state.web3.account
 });

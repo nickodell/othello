@@ -73,6 +73,14 @@
   grid-row: 2;
 }
 
+.bottomBar {
+  grid-column: 2;
+  grid-row: 3;
+  color: white;
+  font-size: 2rem;
+  line-height: 2rem;
+}
+
 .btn {
   color: white;
   background-image: linear-gradient(to right, rgb(255, 102, 0), rgb(255, 204, 0));
