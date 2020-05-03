@@ -38,7 +38,7 @@ export default function (state=initialState, action) {
         case YOUR_TURN:
             return {
                 ...state,
-                myTurn: true
+                myTurn: action.payload
             };
         case END_GAME:
             return {

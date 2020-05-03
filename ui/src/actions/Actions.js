@@ -164,11 +164,14 @@ export const yourTurnEvent = (contract, account) => async (dispatch) => {
             if (e) {
                 throw new Error(e);
             }
+            let myTurn = false;
             if (r.returnValues.player === account) {
-                dispatch({
-                    type: YOUR_TURN
-                });
+                myTurn = true;
             }
+            dispatch({
+                type: YOUR_TURN,
+                payload: myTurn
+            });
         });
     } catch (err) {
         alert('Error in getting YourTurn Event, please check console');
@@ -217,7 +220,8 @@ export const newGameEvent = (contract, account) => async (dispatch) => {
             });
             if (r.returnValues.black === account) {
                 dispatch({
-                    type: YOUR_TURN
+                    type: YOUR_TURN,
+                    payload: true
                 });
             }
         });
