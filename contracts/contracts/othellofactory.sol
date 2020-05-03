@@ -193,7 +193,7 @@ contract othellofactory is Board{
     }
     
     // Returns the address of the player whose turn it is
-    function getCurrentTurnAddress() private view returns(address currentPlayer){
+    function getCurrentTurnAddress() public view returns(address currentPlayer){
         address currentTurnAddress=getMyGame().isWhiteTurn? getMyGame().whiteaddress: getMyGame().blackaddress;
         return currentTurnAddress;
     }
