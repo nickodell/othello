@@ -9,14 +9,14 @@ import Square from '../components/square';
 class GameBoard extends Component {
     async componentDidMount() {
         await this.props.getMyColor(this.props.ofContract, this.props.account);
-        await this.props.getGamestate(this.props.ofContract);
-        await this.props.getLegalMoves(this.props.ofContract);
+        await this.props.getGamestate(this.props.ofContract, this.props.account);
+        await this.props.getLegalMoves(this.props.ofContract, this.props.account);
     }
 
     async componentDidUpdate(prevProps) {
         if ((!prevProps.myTurn) && (this.props.myTurn)) {
-            await this.props.getGamestate(this.props.ofContract);
-            await this.props.getLegalMoves(this.props.ofContract)
+            await this.props.getGamestate(this.props.ofContract, this.props.account);
+            await this.props.getLegalMoves(this.props.ofContract, this.props.account)
         }
         if (this.props.gameResult) {
             this.props.toggleModal(this.props.gameResult);
