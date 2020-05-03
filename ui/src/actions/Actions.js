@@ -83,9 +83,10 @@ export const getMyColor = (contract, account) => async (dispatch) => {
 export const getGamestate = (contract, account) => async (dispatch) => {
     try {
         const tiles = await contract.methods.getTilesArray().call({ from: account });
+        const tilesParsed = tiles.map(val => parseInt(val));
         dispatch({
             type: UPDATE_GAMEBOARD,
-            payload: tiles
+            payload: tilesParsed
         });
     } catch (err) {
         alert('Cannot fetch gamestate, please check console');

@@ -34,7 +34,7 @@ class GameBoard extends Component {
             if ((this.props.legalMoves[i] == 1) && (!this.props.myTurn)) {
                 return (
                     <div key={i} className="tile" onClick={() => this.props.playMove(i, this.props.ofContract, this.props.account)}>
-                        <Square values={"2"} />
+                        <Square values={2} />
                     </div>
                 );
             } else {
