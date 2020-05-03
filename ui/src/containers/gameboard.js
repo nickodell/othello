@@ -31,7 +31,7 @@ class GameBoard extends Component {
 
     render() {
         const board = this.props.gamestate.map((val, i) => {
-            if (this.props.legalMoves[i]) {
+            if ((this.props.legalMoves[i]) && (!this.props.myTurn)) {
                 return (
                     <div key={i} className="tile" onClick={() => this.props.playMove(i, this.props.ofContract, this.props.account)}>
                         <Square values={"2"} />
