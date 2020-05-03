@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getWeb3Instance, getContracts, yourTurn, newGameEvent } from '../actions/Actions';
+import { getWeb3Instance, getContracts, yourTurnEvent, newGameEvent, forfeitEvent, endGameEvent } from '../actions/Actions';
 
 class Web3Container extends Component {
     async componentDidMount() {
@@ -13,8 +13,10 @@ class Web3Container extends Component {
 
     async componentDidUpdate(prevProps) {
         if ((prevProps.ofContract === null) && (this.props.ofContract)) {
-            await this.props.yourTurn(this.props.ofContract, this.props.account);
-            await this.props.newGameEvent(this.props.ofContract);
+            await this.props.yourTurnEvent(this.props.ofContract, this.props.account);
+            await this.props.newGameEvent(this.props.ofContract, this.props.account);
+            await this.props.forfeitEvent(this.props.ofContract, this.props.account);
+            await this.props.endGameEvent(this.props.ofContract, this.props.account);
         }
     }
     render() {
@@ -25,6 +27,10 @@ class Web3Container extends Component {
 Web3Container.propTypes = {
     getWeb3Instance: PropTypes.func.isRequired,
     getContracts: PropTypes.func.isRequired,
+    yourTurnEvent: PropTypes.func.isRequired,
+    newGameEvent: PropTypes.func.isRequired,
+    forfeitEvent: PropTypes.func.isRequired,
+    endGameEvent: PropTypes.func.isRequired,
     web3: PropTypes.object,
     account: PropTypes.string,
     ofContract: PropTypes.object
@@ -36,4 +42,4 @@ const mapStateToProps = (state) => ({
     ofContract: state.web3.ofContract
 });
 
-export default connect(mapStateToProps, { getWeb3Instance, getContracts, yourTurn, newGameEvent })(Web3Container);
+export default connect(mapStateToProps, { getWeb3Instance, getContracts, yourTurnEvent, newGameEvent, forfeitEvent, endGameEvent })(Web3Container);

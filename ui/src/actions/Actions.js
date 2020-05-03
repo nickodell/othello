@@ -80,12 +80,13 @@ export const getMyColor = (contract, account) => async (dispatch) => {
     }
 };
 
-export const getGamestate = (contract) => async (dispatch) => {
+export const getGamestate = (contract, account) => async (dispatch) => {
     try {
-        const tiles = await contract.methods.getTilesArray().call();
+        const tiles = await contract.methods.getTilesArray().call({ from: account });
+        const tilesParsed = tiles.map(val => parseInt(val));
         dispatch({
             type: UPDATE_GAMEBOARD,
-            payload: tiles
+            payload: tilesParsed
         });
     } catch (err) {
         alert('Cannot fetch gamestate, please check console');
@@ -93,12 +94,13 @@ export const getGamestate = (contract) => async (dispatch) => {
     }
 };
 
-export const getLegalMoves = (contract) => async (dispatch) => {
+export const getLegalMoves = (contract, account) => async (dispatch) => {
     try {
-        const legalMoves = await contract.methods.getValidMoves().call();
+        const legalMoves = await contract.methods.getValidMoves().call({ from: account });
+        const legalMovesParsed = legalMoves.map(val => parseInt(val));
         dispatch({
             type: GET_LEGAL_MOVES,
-            payload: legalMoves
+            payload: legalMovesParsed
         });
     } catch (err) {
         alert('Cannot fetch legal moves, please check console');
@@ -112,11 +114,10 @@ export const playMove = (index, contract, account) => async (dispatch) => {
             type: PLAY_MOVE,
             payload: false
         });
-        const x = Math.floor(index / 8);
-        const y = index % 8;
+        const x = index % 8;
+        const y = Math.floor(index / 8);
         console.log('Playing move: (' + x + ', ' + y + ')')
         await contract.methods.playMove(x, y).send({ from: account, gas: 6721975 });
-        console.log('Successfully played move');
     } catch (err) {
         alert('Play move failed, please check console');
         console.log(err);
@@ -140,17 +141,37 @@ export const passMove = (contract, account) => async (dispatch) => {
     }
 };
 
-export const yourTurn = (contract, account) => async (dispatch) => {
+export const getCurrentTurnAddress = (contract, account) => async (dispatch) => {
+    try {
+        const currentTurnAddress = await contract.methods.getCurrentTurnAddress().call({ from: account });
+        let myTurn = false;
+        if (currentTurnAddress === account) {
+            myTurn = true;
+        }
+        dispatch({
+            type: YOUR_TURN,
+            payload: myTurn
+        });
+    } catch (err) {
+        alert('Cannot fetch current turn, please check console');
+        console.log(err);
+    }
+};
+
+export const yourTurnEvent = (contract, account) => async (dispatch) => {
     try {
         await contract.events.YourTurn((e, r) => {
             if (e) {
                 throw new Error(e);
             }
-            if (r.args.player === account) {
-                dispatch({
-                    type: YOUR_TURN
-                });
+            let myTurn = false;
+            if (r.returnValues.player === account) {
+                myTurn = true;
             }
+            dispatch({
+                type: YOUR_TURN,
+                payload: myTurn
+            });
         });
     } catch (err) {
         alert('Error in getting YourTurn Event, please check console');
@@ -158,17 +179,9 @@ export const yourTurn = (contract, account) => async (dispatch) => {
     }
 };
 
-export const forfeitGame = (contract, account) => async (dispatch) => {
+export const forfeitGame = (contract, account) => async () => {
     try {
-        const isForfeitSuccess = await contract.methods.forfeit().send({ from: account, gas: 6721975 });
-        if (isForfeitSuccess) {
-            dispatch({
-                type: FORFEIT_GAME,
-                payload: 'LOSER'
-            });
-        } else {
-            throw new Error('Forfeit function returned false');
-        }
+        await contract.methods.forfeit().send({ from: account, gas: 6721975 });
     } catch (err) {
         alert('Forfeit failed, please see console');
         console.log(err);
@@ -181,12 +194,14 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
             if (e) {
                 throw new Error(e);
             }
-            if (r.args.nonForfeitedPlayer === account) {
-                dispatch({
-                    type: FORFEIT_GAME,
-                    payload: 'WINNER'
-                });
+            let gameResult = 'LOSER';
+            if (r.returnValues.nonForfeitedPlayer === account) {
+                gameResult = 'WINNER';
             }
+            dispatch({
+                type: FORFEIT_GAME,
+                payload: gameResult
+            });
         });
     } catch (err) {
         alert('Error in getting Forfeit event, please check console');
@@ -194,7 +209,7 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
     }
 };
 
-export const newGameEvent = (contract) => async (dispatch) => {
+export const newGameEvent = (contract, account) => async (dispatch) => {
     try {
         await contract.events.NewGame((e, r) => {
             if (e) {
@@ -203,6 +218,12 @@ export const newGameEvent = (contract) => async (dispatch) => {
             dispatch({
                 type: NEW_GAME
             });
+            if (r.returnValues.black === account) {
+                dispatch({
+                    type: YOUR_TURN,
+                    payload: true
+                });
+            }
         });
     } catch (err) {
         alert('Error getting NewGame event, please check console');
@@ -217,10 +238,10 @@ export const endGameEvent = (contract, account) => async (dispatch) => {
                 throw new Error(e);
             }
             let gameResult = 'LOSER';
-            if (r.args.isDraw) {
+            if (r.returnValues.isDraw) {
                 gameResult = 'DRAW';
             }
-            else if (r.args.winner === account) {
+            else if (r.returnValues.winner === account) {
                 gameResult = 'WINNER';
             }
             dispatch({

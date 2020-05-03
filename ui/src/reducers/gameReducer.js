@@ -21,14 +21,9 @@ export default function (state=initialState, action) {
                 gamestate: action.payload
             };
         case GET_LEGAL_MOVES:
-            let myTurn = false;
-            if (((state.myColor === 'WHITE') && (action.payload.whiteToMove)) || ((state.myColor === 'BLACK') && (!action.payload.whiteToMove))) {
-                myTurn = true;
-            }
             return {
                 ...state,
-                legalMoves: action.payload.validMoves,
-                myTurn: myTurn
+                legalMoves: action.payload
             };
         case PLAY_MOVE:
             return {
@@ -43,7 +38,7 @@ export default function (state=initialState, action) {
         case YOUR_TURN:
             return {
                 ...state,
-                myTurn: true
+                myTurn: action.payload
             };
         case END_GAME:
             return {

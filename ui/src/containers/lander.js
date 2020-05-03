@@ -6,7 +6,7 @@ import { getCurrentState, enterName, createNewGame } from '../actions/Actions';
 
 class Lander extends Component {
     async componentDidUpdate(prevProps) {
-        if ((prevProps.ofContract === null) && (this.props.ofContract)) {
+        if (((prevProps.ofContract === null) && (this.props.ofContract)) || ((prevProps.gameCreated === null) && (this.props.gameCreated))) {
             await this.props.getCurrentState(this.props.ofContract, this.props.account);
         }
     }
@@ -15,7 +15,7 @@ class Lander extends Component {
         let displayThis = null;
         if (this.props.currentState === 'IDLE') {
             displayThis = (
-                <form onSubmit={ async () => await this.props.createNewGame(this.props.ofContract, this.props.account, this.props.name) }>
+                <form onSubmit={ async (event) => { event.preventDefault(); await this.props.createNewGame(this.props.ofContract, this.props.account, this.props.name); } }>
                     <input type="text" placeholder="Your name here" value={this.props.name} onChange={(e) => this.props.enterName(e.target.value)} className="nameInput" />
                     <button type="submit" className="btn">Submit</button>
                 </form>

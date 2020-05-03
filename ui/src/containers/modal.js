@@ -7,10 +7,10 @@ import { toggleModal } from '../actions/Actions';
 class Modal extends Component {
     render() {
         const modalText = {
-            0: 'Illegal move, please select from the provided legal moves.',
-            1: 'White',
-            2: '',
-            3: 'Black',
+            '0': 'Illegal move, please select from the provided legal moves.',
+            '1': 'Black',
+            '2': '',
+            '3': 'White',
             'WINNER': 'Winner winner, chicken dinner!',
             'LOSER': 'You\'ve lost :(',
             'DRAW': 'Game was a draw!'
@@ -32,7 +32,7 @@ class Modal extends Component {
 
 Modal.propTypes = {
     showModal: PropTypes.bool,
-    tileValue: PropTypes.number
+    tileValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 
 const mapStateToProps = (state) => ({
