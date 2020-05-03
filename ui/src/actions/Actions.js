@@ -160,17 +160,9 @@ export const yourTurn = (contract, account) => async (dispatch) => {
     }
 };
 
-export const forfeitGame = (contract, account) => async (dispatch) => {
+export const forfeitGame = (contract, account) => async () => {
     try {
-        const isForfeitSuccess = await contract.methods.forfeit().send({ from: account, gas: 6721975 });
-        if (isForfeitSuccess) {
-            dispatch({
-                type: FORFEIT_GAME,
-                payload: 'LOSER'
-            });
-        } else {
-            throw new Error('Forfeit function returned false');
-        }
+        await contract.methods.forfeit().send({ from: account, gas: 6721975 });
     } catch (err) {
         alert('Forfeit failed, please see console');
         console.log(err);
@@ -183,12 +175,14 @@ export const forfeitEvent = (contract, account) => async (dispatch) => {
             if (e) {
                 throw new Error(e);
             }
+            let gameResult = 'LOSER';
             if (r.args.nonForfeitedPlayer === account) {
-                dispatch({
-                    type: FORFEIT_GAME,
-                    payload: 'WINNER'
-                });
+                gameResult = 'WINNER';
             }
+            dispatch({
+                type: FORFEIT_GAME,
+                payload: gameResult
+            });
         });
     } catch (err) {
         alert('Error in getting Forfeit event, please check console');
