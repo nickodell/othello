@@ -29,9 +29,7 @@ export const getContracts = (web3) => async (dispatch) => {
 
 export const getCurrentState = (contract, account) => async (dispatch) => {
     try {
-        console.log('current state action');
-        const currentState = await contract.methods.getCurrentState().send({ from: account, gas: 50000 });
-        console.log('current state: ' + currentState);
+        const currentState = await contract.methods.getCurrentState().call({ from: account });
         dispatch({
             type: GET_CURRENT_STATE,
             payload: currentState
@@ -51,10 +49,10 @@ export const enterName = (name) => dispatch => {
 
 export const createNewGame = (contract, account, name) => async (dispatch) => {
     try {
-        const gameCreated = await contract.methods.createNewGame(name).send({ from: account, gas: 50000 });
+        await contract.methods.createNewGame(name).send({ from: account, gas: 6721975 });
         dispatch({
             type: CREATE_GAME,
-            payload: { name: name, gameCreated: gameCreated }
+            payload: { name: name, gameCreated: true }
         });
     } catch (err) {
         alert(err);
@@ -71,9 +69,7 @@ export const toggleModal = (i) => dispatch => {
 
 export const getMyColor = (contract, account) => async (dispatch) => {
     try {
-        const myColor = await contract.methods.getMyColor().call({ from: account }); // Method not yet merged
-        console.log('My Color: ' + myColor);
-
+        const myColor = await contract.methods.getMyColor().call({ from: account });
         dispatch({
             type: GET_COLOR,
             payload: myColor
@@ -119,7 +115,7 @@ export const playMove = (index, contract, account) => async (dispatch) => {
         const x = Math.floor(index / 8);
         const y = index % 8;
         console.log('Playing move: (' + x + ', ' + y + ')')
-        await contract.methods.playMove(x, y).send({ from: account, gas: 50000 });
+        await contract.methods.playMove(x, y).send({ from: account, gas: 6721975 });
         console.log('Successfully played move');
     } catch (err) {
         alert('Play move failed, please check console');
@@ -151,7 +147,7 @@ export const yourTurn = (contract, account) => async (dispatch) => {
 
 export const forfeitGame = (contract, account) => async (dispatch) => {
     try {
-        const isForfeitSuccess = await contract.methods.forfeit().send({ from: account, gas: 50000 });
+        const isForfeitSuccess = await contract.methods.forfeit().send({ from: account, gas: 6721975 });
         if (isForfeitSuccess) {
             dispatch({
                 type: FORFEIT_GAME,
