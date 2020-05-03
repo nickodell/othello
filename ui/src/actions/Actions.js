@@ -143,10 +143,12 @@ export const passMove = (contract, account) => async (dispatch) => {
 export const yourTurn = (contract, account) => async (dispatch) => {
     try {
         await contract.events.YourTurn((e, r) => {
+            console.log("error", e);
+            console.log("result", r);
             if (e) {
                 throw new Error(e);
             }
-            if (r.args.player === account) {
+            if (r.returnValues.player === account) {
                 dispatch({
                     type: YOUR_TURN
                 });
